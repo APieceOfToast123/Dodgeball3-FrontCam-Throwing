@@ -1,11 +1,7 @@
 from MVC.EventManager import *
 
 # State machine constants for the StateMachine class below
-STATE_CV = 1
-STATE_POSE = 2
-STATE_HAND = 3
-STATE_FACEMESH = 4
-STATE_HOLISTIC = 5
+STATE_POSE = 1
 
 class GameEngine(object):
     def __init__(self, evManager):
@@ -19,14 +15,14 @@ class GameEngine(object):
         
     def load_settings_and_data(self):
         import pygame
-        icon_path = "Resources/Images/icon.png"
-        pygame_icon = pygame.image.load(icon_path)
-        pygame.display.set_icon(pygame_icon)
+        # icon_path = "Resources/Images/icon.png"
+        # pygame_icon = pygame.image.load(icon_path)
+        # pygame.display.set_icon(pygame_icon)
 
-        self.add_button_path = "Resources/Images/Buttons_add.png"
-        self.minus_button_path = "Resources/Images/Buttons_minus.png"
-        self.bun_sprite_path = "Resources/Images/Bun/"
-        self.bun_sprite_time = 0.6
+        # self.add_button_path = "Resources/Images/Buttons_add.png"
+        # self.minus_button_path = "Resources/Images/Buttons_minus.png"
+        # self.bun_sprite_path = "Resources/Images/Bun/"
+        # self.bun_sprite_time = 0.6
 
 
     def notify(self, event):

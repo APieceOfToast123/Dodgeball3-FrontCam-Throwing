@@ -42,51 +42,51 @@ class UI_View(object):
         self.isinitialized = False
         pygame.quit()
 
-    def init_page(self):
-        self.model.add_button = button((100, 150), self.model.add_button_path, self.model, 2)
-        self.model.minus_button = button((100, 250), self.model.minus_button_path, self.model, 2)
+    # def init_page(self):
+    #     self.model.add_button = button((100, 150), self.model.add_button_path, self.model, 2)
+    #     self.model.minus_button = button((100, 250), self.model.minus_button_path, self.model, 2)
         
-        self.model.bun_sprite = sprite_engine(self.model.bun_sprite_path, (100, 400), 6, self.model)
+    #     self.model.bun_sprite = sprite_engine(self.model.bun_sprite_path, (100, 400), 6, self.model)
 
     def render(self):
         # Display FPS
         self.model.FPS_class.display_FPS(self.model.img)
-        try:
+        # try:
             # Display Mediapipe Pose landmarks
-            if self.model.currentstate == 2:
+        if self.model.currentstate == 1:
                 # self.model.Mediapipe_pose_class.draw_all_landmark_circle(self.model.img) # ctrl / to comment
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
                 # self.model.Mediapipe_pose_class.draw_all_landmark_drawing_utils(self.model.img)
                 self.model.Mediapipe_pose_class.expand_landmark()
                 self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
-                # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
+        #         # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
                
-            # # Display Mediapipe Hand landmarks
-            # if self.model.currentstate == 3:
-            #     # self.model.Mediapipe_hand_class.draw_all_landmark_circle(self.model.img)
-            #     self.model.Mediapipe_hand_class.draw_all_landmark_drawing_utils(self.model.img)
+        #     # # Display Mediapipe Hand landmarks
+        #     # if self.model.currentstate == 3:
+        #     #     # self.model.Mediapipe_hand_class.draw_all_landmark_circle(self.model.img)
+        #     #     self.model.Mediapipe_hand_class.draw_all_landmark_drawing_utils(self.model.img)
 
-            # # Display Mediapipe FaceMesh landmarks
-            # if self.model.currentstate == 4:
-            #     self.model.Mediapipe_FaceMesh_class.draw_all_landmark_drawing_utils(self.model.img)
+        #     # # Display Mediapipe FaceMesh landmarks
+        #     # if self.model.currentstate == 4:
+        #     #     self.model.Mediapipe_FaceMesh_class.draw_all_landmark_drawing_utils(self.model.img)
 
-            # # Display Mediapipe Holistic landmarks 
-            # if self.model.currentstate == 5:
-            #     self.model.Mediapipe_Holistic_class.draw_all_landmark_drawing_utils(self.model.img)
-        except Exception as e:
-            print(e)
-        # Display Segmentation
-        # self.model.img = self.model.segmentation_class.calculate_segmentation(self.model.img, Mediapipe_Holistic_class.get_segmentation_mask())
+        #     # # Display Mediapipe Holistic landmarks 
+        #     # if self.model.currentstate == 5:
+        #     #     self.model.Mediapipe_Holistic_class.draw_all_landmark_drawing_utils(self.model.img)
+        # except Exception as e:
+        #     print(e)
+        # # Display Segmentation
+        # # self.model.img = self.model.segmentation_class.calculate_segmentation(self.model.img, Mediapipe_Holistic_class.get_segmentation_mask())
 
-        # self.model.CV2_class.display_camera(self.model.img) # show image
+        # # self.model.CV2_class.display_camera(self.model.img) # show image
 
-        # if self.model.CV2_class.check_exit():
-        #     self.model.CV2_class.release_camera() # release camera
-        #     self.evManager.Post(QuitEvent())
+        # # if self.model.CV2_class.check_exit():
+        # #     self.model.CV2_class.release_camera() # release camera
+        # #     self.evManager.Post(QuitEvent())
 
-        # if self.model.state == 1:
-        #     render_Page1()
+        # # if self.model.state == 1:
+        # #     render_Page1()
             
         """
         Draw things on pygame
@@ -102,13 +102,14 @@ class UI_View(object):
 
         # blit the image onto the screen
         self.model.screen.blit(self.model.img, (0, 0))
-        
-        # Draw button
-        self.model.add_button.draw(self.model.screen)
-        self.model.minus_button.draw(self.model.screen)
 
-        # Draw sprite
-        self.model.bun_sprite.draw(self.model.bun_sprite_time)
+        
+        # # Draw button
+        # self.model.add_button.draw(self.model.screen)
+        # self.model.minus_button.draw(self.model.screen)
+
+        # # Draw sprite
+        # self.model.bun_sprite.draw(self.model.bun_sprite_time)
 
         # Update the screen
         pygame.display.flip()

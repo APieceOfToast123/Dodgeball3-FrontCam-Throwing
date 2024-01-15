@@ -1,231 +1,6 @@
 import mediapipe
 import cv2
 import numpy as np
-class mediapipe_holistic_engine():
-    def __init__(self):
-        self.AI_model = mediapipe.solutions.holistic
-        self.AI_model_initialized = self.AI_model.Holistic(
-                                    model_complexity = 1,
-                                    refine_face_landmarks = True,
-                                    min_detection_confidence = 0.5, 
-                                    min_tracking_confidence = 0.5,
-                                    enable_segmentation = True,
-                                    smooth_segmentation = True
-                                    )
-        self.mp_drawing = mediapipe.solutions.drawing_utils
-        self.mp_drawing_styles = mediapipe.solutions.drawing_styles
-
-    def process_image(self, img):
-        self.results = self.AI_model_initialized.process(img)
-        
-        if self.results.pose_landmarks:
-            self.pose_detected = True
-            self.Pose_Pixel_Landmark_list = self.results.pose_landmarks
-            self.Pose_Pixel_Landmark = self.results.pose_landmarks.landmark
-            self.Pose_World_Landmark = self.results.pose_world_landmarks.landmark
-        else:
-            self.pose_detected = False
-            cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-        
-        if self.results.face_landmarks:
-            self.face_detected = True
-            self.Face_Pixel_Landmark = self.results.face_landmarks.landmark
-        else:
-            self.face_detected = False
-            cv2.putText(img, "No face detected", (10, 180), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-
-        if self.results.left_hand_landmarks:
-            self.left_hand_detected = True
-            self.Left_Hand_Pixel_Landmark = self.results.left_hand_landmarks.landmark
-        else:
-            self.left_hand_detected = False
-            cv2.putText(img, "No left hand detected", (10, 250), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-        
-        if self.results.right_hand_landmarks:
-            self.right_hand_detected = True
-            self.Right_Hand_Pixel_Landmark = self.results.right_hand_landmarks.landmark
-        else:
-            self.right_hand_detected = False
-            cv2.putText(img, "No right hand detected", (10, 320), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-
-    def draw_all_landmark_drawing_utils(self, img):
-        if self.face_detected:
-            self.mp_drawing.draw_landmarks(
-                img,
-                self.results.face_landmarks,
-                self.AI_model.FACEMESH_CONTOURS,
-                landmark_drawing_spec=None,
-                connection_drawing_spec=self.mp_drawing_styles
-                .get_default_face_mesh_contours_style())
-        if self.pose_detected:
-            self.mp_drawing.draw_landmarks(
-                img,
-                self.results.pose_landmarks,
-                self.AI_model.POSE_CONNECTIONS,
-                landmark_drawing_spec=self.mp_drawing_styles
-                .get_default_pose_landmarks_style())
-        if self.left_hand_detected:
-            self.mp_drawing.draw_landmarks(
-                img,
-                self.results.left_hand_landmarks,
-                self.AI_model.HAND_CONNECTIONS,
-                landmark_drawing_spec=self.mp_drawing_styles
-                .get_default_hand_landmarks_style())
-        if self.right_hand_detected:
-            self.mp_drawing.draw_landmarks(
-                img,
-                self.results.right_hand_landmarks,
-                self.AI_model.HAND_CONNECTIONS,
-                landmark_drawing_spec=self.mp_drawing_styles
-                .get_default_hand_landmarks_style())
-    
-    def get_segmentation_mask(self):
-        return self.results.segmentation_mask
-        
-        
-class mediapipe_face_mesh_engine():
-    def __init__(self):
-        self.AI_model = mediapipe.solutions.face_mesh
-        self.AI_model_initialized = self.AI_model.FaceMesh(
-                                    max_num_faces = 1,
-                                    refine_landmarks = True,
-                                    min_detection_confidence = 0.5, 
-                                    min_tracking_confidence = 0.5
-                                    )
-        self.mp_drawing = mediapipe.solutions.drawing_utils
-        self.mp_drawing_styles = mediapipe.solutions.drawing_styles
-
-    def process_image(self, img):
-        results = self.AI_model_initialized.process(img)
-        if results.multi_face_landmarks:
-            self.detected = True
-            self.Pixel_Landmark = results.multi_face_landmarks
-        else:
-            self.detected = False
-            cv2.putText(img, "No face detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-
-    def draw_all_landmark_drawing_utils(self, img):
-        if self.detected:
-            for face_landmarks in self.Pixel_Landmark:
-                self.mp_drawing.draw_landmarks(
-                    img,
-                    landmark_list=face_landmarks,
-                    connections=self.AI_model.FACEMESH_TESSELATION,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=self.mp_drawing_styles
-                    .get_default_face_mesh_tesselation_style())
-                self.mp_drawing.draw_landmarks(
-                    img,
-                    landmark_list=face_landmarks,
-                    connections=self.AI_model.FACEMESH_CONTOURS,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=self.mp_drawing_styles
-                    .get_default_face_mesh_contours_style())
-                self.mp_drawing.draw_landmarks(
-                    img,
-                    landmark_list=face_landmarks,
-                    connections=self.AI_model.FACEMESH_IRISES,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=self.mp_drawing_styles
-                    .get_default_face_mesh_iris_connections_style())
-                
-class mediapipe_hand_engine():
-    def __init__(self):
-        self.AI_model = mediapipe.solutions.hands
-        self.AI_model_initialized = self.AI_model.Hands(
-                                    model_complexity = 1,
-                                    max_num_hands = 2,
-                                    min_detection_confidence = 0.5, 
-                                    min_tracking_confidence = 0.5
-                                    )
-        self.mp_drawing = mediapipe.solutions.drawing_utils
-        self.mp_drawing_styles = mediapipe.solutions.drawing_styles
-
-    def process_image(self, img):
-        results = self.AI_model_initialized.process(img)
-        
-        if results.multi_hand_landmarks:
-            self.detected = True
-            self.Pixel_Landmark = results.multi_hand_landmarks
-            self.World_Landmark = results.multi_hand_world_landmarks
-        else:
-            self.detected = False
-            cv2.putText(img, "No hand detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
-
-    def expand_landmark(self):
-        if self.detected:
-            # loop the Pixel_Landmark for all detected hands
-            for id, hand_landmarks in enumerate(self.Pixel_Landmark):
-                setattr(self, "Hand_" + str(id) + "_Wrist_x", hand_landmarks.landmark[0].x)
-                """
-                output example of first hand:
-                self.Hand_0_Wrist_x = (0.5, 0.6, 0.7, 0.8, 0.9, ...)
-                output example of second hand:
-                self.Hand_1_Wrist_x = (0.5, 0.6, 0.7, 0.8, 0.9, ...)
-
-                get the x value of the first hand's wrist:
-                getattr(self, "Hand_" + str(id) + "_Wrist_x")
-                """
-                
-                setattr(self, "Hand_" + str(id) + "_Wrist_y", hand_landmarks.landmark[0].y)
-                setattr(self, "Hand_" + str(id) + "_Thumb_CMC_x", hand_landmarks.landmark[1].x)
-                setattr(self, "Hand_" + str(id) + "_Thumb_CMC_y", hand_landmarks.landmark[1].y)
-                setattr(self, "Hand_" + str(id) + "_Thumb_MCP_x", hand_landmarks.landmark[2].x)
-                setattr(self, "Hand_" + str(id) + "_Thumb_MCP_y", hand_landmarks.landmark[2].y)
-                setattr(self, "Hand_" + str(id) + "_Thumb_IP_x", hand_landmarks.landmark[3].x)
-                setattr(self, "Hand_" + str(id) + "_Thumb_IP_y", hand_landmarks.landmark[3].y)
-                setattr(self, "Hand_" + str(id) + "_Thumb_Tip_x", hand_landmarks.landmark[4].x)
-                setattr(self, "Hand_" + str(id) + "_Thumb_Tip_y", hand_landmarks.landmark[4].y)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_MCP_x", hand_landmarks.landmark[5].x)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_MCP_y", hand_landmarks.landmark[5].y)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_PIP_x", hand_landmarks.landmark[6].x)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_PIP_y", hand_landmarks.landmark[6].y)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_DIP_x", hand_landmarks.landmark[7].x)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_DIP_y", hand_landmarks.landmark[7].y)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_Tip_x", hand_landmarks.landmark[8].x)
-                setattr(self, "Hand_" + str(id) + "_Index_Finger_Tip_y", hand_landmarks.landmark[8].y)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_MCP_x", hand_landmarks.landmark[9].x)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_MCP_y", hand_landmarks.landmark[9].y)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_PIP_x", hand_landmarks.landmark[10].x)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_PIP_y", hand_landmarks.landmark[10].y)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_DIP_x", hand_landmarks.landmark[11].x)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_DIP_y", hand_landmarks.landmark[11].y)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_Tip_x", hand_landmarks.landmark[12].x)
-                setattr(self, "Hand_" + str(id) + "_Middle_Finger_Tip_y", hand_landmarks.landmark[12].y)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_MCP_x", hand_landmarks.landmark[13].x)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_MCP_y", hand_landmarks.landmark[13].y)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_PIP_x", hand_landmarks.landmark[14].x)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_PIP_y", hand_landmarks.landmark[14].y)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_DIP_x", hand_landmarks.landmark[15].x)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_DIP_y", hand_landmarks.landmark[15].y)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_Tip_x", hand_landmarks.landmark[16].x)
-                setattr(self, "Hand_" + str(id) + "_Ring_Finger_Tip_y", hand_landmarks.landmark[16].y)
-                setattr(self, "Hand_" + str(id) + "_Pinky_MCP_x", hand_landmarks.landmark[17].x)
-                setattr(self, "Hand_" + str(id) + "_Pinky_MCP_y", hand_landmarks.landmark[17].y)
-                setattr(self, "Hand_" + str(id) + "_Pinky_PIP_x", hand_landmarks.landmark[18].x)
-                setattr(self, "Hand_" + str(id) + "_Pinky_PIP_y", hand_landmarks.landmark[18].y)
-                setattr(self, "Hand_" + str(id) + "_Pinky_DIP_x", hand_landmarks.landmark[19].x)
-                setattr(self, "Hand_" + str(id) + "_Pinky_DIP_y", hand_landmarks.landmark[19].y)
-                setattr(self, "Hand_" + str(id) + "_Pinky_Tip_x", hand_landmarks.landmark[20].x)
-                setattr(self, "Hand_" + str(id) + "_Pinky_Tip_y", hand_landmarks.landmark[20].y)                
-
-    def draw_all_landmark_circle(self, img):
-        if self.detected:
-            for hand_landmarks in self.Pixel_Landmark:
-                for id, lm in enumerate(hand_landmarks.landmark):
-                    cx, cy = int(lm.x * img.shape[1]), int(lm.y * img.shape[0])
-                    cv2.circle(img, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
-
-    def draw_all_landmark_drawing_utils(self, img):
-        if self.detected:
-            for hand_landmarks in self.Pixel_Landmark:
-                self.mp_drawing.draw_landmarks(
-                    img,
-                    hand_landmarks,
-                    self.AI_model.HAND_CONNECTIONS,
-                    self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                    self.mp_drawing_styles.get_default_hand_connections_style(),
-                    )
 
 class mediapipe_pose_engine():
     def __init__(self):
@@ -347,7 +122,6 @@ class mediapipe_pose_engine():
         cv2.line(img, (int(self.Right_Ankle_x * img.shape[1]), int(self.Right_Ankle_y * img.shape[0])), (int(self.Right_Heel_x * img.shape[1]), int(self.Right_Heel_y * img.shape[0])), (255, 0, 0), 3)
         cv2.line(img, (int(self.Right_Ankle_x * img.shape[1]), int(self.Right_Ankle_y * img.shape[0])), (int(self.Right_Foot_Index_x * img.shape[1]), int(self.Right_Foot_Index_y * img.shape[0])), (255, 0, 0), 3)
 
-
     def draw_shoulder_line(self, img):
         median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
         median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
@@ -356,17 +130,17 @@ class mediapipe_pose_engine():
         
         self.shoulder_angle =  np.arctan2(y_diff,x_diff)
         cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)
-        if np.pi/36 < self.shoulder_angle < np.pi/18:
+        if self.shoulder_angle < np.pi/36:
+            self.hint = "Stable State"
+        elif np.pi/36 < self.shoulder_angle < np.pi/18:
             self.hint = "Level One"
         elif np.pi/18 < self.shoulder_angle < np.pi/9:
             self.hint = " level Two"
         elif np.pi/9 < self.shoulder_angle < np.pi/6:
             self.hint = "Level Three"
+        elif np.pi/6 < self.shoulder_angle:
+            self.hint = "You wrist too much!!"
         cv2.putText(img, self.hint, (int(median_x_coor * img.shape[1]), int(median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-
-
-
-
 
     def draw_all_landmark_drawing_utils(self, img):
         try:
@@ -378,3 +152,229 @@ class mediapipe_pose_engine():
                     )
         except:
             pass
+
+# class mediapipe_holistic_engine():
+#     def __init__(self):
+#         self.AI_model = mediapipe.solutions.holistic
+#         self.AI_model_initialized = self.AI_model.Holistic(
+#                                     model_complexity = 1,
+#                                     refine_face_landmarks = True,
+#                                     min_detection_confidence = 0.5, 
+#                                     min_tracking_confidence = 0.5,
+#                                     enable_segmentation = True,
+#                                     smooth_segmentation = True
+#                                     )
+#         self.mp_drawing = mediapipe.solutions.drawing_utils
+#         self.mp_drawing_styles = mediapipe.solutions.drawing_styles
+
+#     def process_image(self, img):
+#         self.results = self.AI_model_initialized.process(img)
+        
+#         if self.results.pose_landmarks:
+#             self.pose_detected = True
+#             self.Pose_Pixel_Landmark_list = self.results.pose_landmarks
+#             self.Pose_Pixel_Landmark = self.results.pose_landmarks.landmark
+#             self.Pose_World_Landmark = self.results.pose_world_landmarks.landmark
+#         else:
+#             self.pose_detected = False
+#             cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+        
+#         if self.results.face_landmarks:
+#             self.face_detected = True
+#             self.Face_Pixel_Landmark = self.results.face_landmarks.landmark
+#         else:
+#             self.face_detected = False
+#             cv2.putText(img, "No face detected", (10, 180), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+
+#         if self.results.left_hand_landmarks:
+#             self.left_hand_detected = True
+#             self.Left_Hand_Pixel_Landmark = self.results.left_hand_landmarks.landmark
+#         else:
+#             self.left_hand_detected = False
+#             cv2.putText(img, "No left hand detected", (10, 250), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+        
+#         if self.results.right_hand_landmarks:
+#             self.right_hand_detected = True
+#             self.Right_Hand_Pixel_Landmark = self.results.right_hand_landmarks.landmark
+#         else:
+#             self.right_hand_detected = False
+#             cv2.putText(img, "No right hand detected", (10, 320), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+
+#     def draw_all_landmark_drawing_utils(self, img):
+#         if self.face_detected:
+#             self.mp_drawing.draw_landmarks(
+#                 img,
+#                 self.results.face_landmarks,
+#                 self.AI_model.FACEMESH_CONTOURS,
+#                 landmark_drawing_spec=None,
+#                 connection_drawing_spec=self.mp_drawing_styles
+#                 .get_default_face_mesh_contours_style())
+#         if self.pose_detected:
+#             self.mp_drawing.draw_landmarks(
+#                 img,
+#                 self.results.pose_landmarks,
+#                 self.AI_model.POSE_CONNECTIONS,
+#                 landmark_drawing_spec=self.mp_drawing_styles
+#                 .get_default_pose_landmarks_style())
+#         if self.left_hand_detected:
+#             self.mp_drawing.draw_landmarks(
+#                 img,
+#                 self.results.left_hand_landmarks,
+#                 self.AI_model.HAND_CONNECTIONS,
+#                 landmark_drawing_spec=self.mp_drawing_styles
+#                 .get_default_hand_landmarks_style())
+#         if self.right_hand_detected:
+#             self.mp_drawing.draw_landmarks(
+#                 img,
+#                 self.results.right_hand_landmarks,
+#                 self.AI_model.HAND_CONNECTIONS,
+#                 landmark_drawing_spec=self.mp_drawing_styles
+#                 .get_default_hand_landmarks_style())
+    
+#     def get_segmentation_mask(self):
+#         return self.results.segmentation_mask
+        
+        
+# class mediapipe_face_mesh_engine():
+#     def __init__(self):
+#         self.AI_model = mediapipe.solutions.face_mesh
+#         self.AI_model_initialized = self.AI_model.FaceMesh(
+#                                     max_num_faces = 1,
+#                                     refine_landmarks = True,
+#                                     min_detection_confidence = 0.5, 
+#                                     min_tracking_confidence = 0.5
+#                                     )
+#         self.mp_drawing = mediapipe.solutions.drawing_utils
+#         self.mp_drawing_styles = mediapipe.solutions.drawing_styles
+
+#     def process_image(self, img):
+#         results = self.AI_model_initialized.process(img)
+#         if results.multi_face_landmarks:
+#             self.detected = True
+#             self.Pixel_Landmark = results.multi_face_landmarks
+#         else:
+#             self.detected = False
+#             cv2.putText(img, "No face detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+
+#     def draw_all_landmark_drawing_utils(self, img):
+#         if self.detected:
+#             for face_landmarks in self.Pixel_Landmark:
+#                 self.mp_drawing.draw_landmarks(
+#                     img,
+#                     landmark_list=face_landmarks,
+#                     connections=self.AI_model.FACEMESH_TESSELATION,
+#                     landmark_drawing_spec=None,
+#                     connection_drawing_spec=self.mp_drawing_styles
+#                     .get_default_face_mesh_tesselation_style())
+#                 self.mp_drawing.draw_landmarks(
+#                     img,
+#                     landmark_list=face_landmarks,
+#                     connections=self.AI_model.FACEMESH_CONTOURS,
+#                     landmark_drawing_spec=None,
+#                     connection_drawing_spec=self.mp_drawing_styles
+#                     .get_default_face_mesh_contours_style())
+#                 self.mp_drawing.draw_landmarks(
+#                     img,
+#                     landmark_list=face_landmarks,
+#                     connections=self.AI_model.FACEMESH_IRISES,
+#                     landmark_drawing_spec=None,
+#                     connection_drawing_spec=self.mp_drawing_styles
+#                     .get_default_face_mesh_iris_connections_style())
+                
+# class mediapipe_hand_engine():
+#     def __init__(self):
+#         self.AI_model = mediapipe.solutions.hands
+#         self.AI_model_initialized = self.AI_model.Hands(
+#                                     model_complexity = 1,
+#                                     max_num_hands = 2,
+#                                     min_detection_confidence = 0.5, 
+#                                     min_tracking_confidence = 0.5
+#                                     )
+#         self.mp_drawing = mediapipe.solutions.drawing_utils
+#         self.mp_drawing_styles = mediapipe.solutions.drawing_styles
+
+#     def process_image(self, img):
+#         results = self.AI_model_initialized.process(img)
+        
+#         if results.multi_hand_landmarks:
+#             self.detected = True
+#             self.Pixel_Landmark = results.multi_hand_landmarks
+#             self.World_Landmark = results.multi_hand_world_landmarks
+#         else:
+#             self.detected = False
+#             cv2.putText(img, "No hand detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+
+#     def expand_landmark(self):
+#         if self.detected:
+#             # loop the Pixel_Landmark for all detected hands
+#             for id, hand_landmarks in enumerate(self.Pixel_Landmark):
+#                 setattr(self, "Hand_" + str(id) + "_Wrist_x", hand_landmarks.landmark[0].x)
+#                 """
+#                 output example of first hand:
+#                 self.Hand_0_Wrist_x = (0.5, 0.6, 0.7, 0.8, 0.9, ...)
+#                 output example of second hand:
+#                 self.Hand_1_Wrist_x = (0.5, 0.6, 0.7, 0.8, 0.9, ...)
+
+#                 get the x value of the first hand's wrist:
+#                 getattr(self, "Hand_" + str(id) + "_Wrist_x")
+#                 """
+                
+#                 setattr(self, "Hand_" + str(id) + "_Wrist_y", hand_landmarks.landmark[0].y)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_CMC_x", hand_landmarks.landmark[1].x)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_CMC_y", hand_landmarks.landmark[1].y)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_MCP_x", hand_landmarks.landmark[2].x)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_MCP_y", hand_landmarks.landmark[2].y)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_IP_x", hand_landmarks.landmark[3].x)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_IP_y", hand_landmarks.landmark[3].y)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_Tip_x", hand_landmarks.landmark[4].x)
+#                 setattr(self, "Hand_" + str(id) + "_Thumb_Tip_y", hand_landmarks.landmark[4].y)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_MCP_x", hand_landmarks.landmark[5].x)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_MCP_y", hand_landmarks.landmark[5].y)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_PIP_x", hand_landmarks.landmark[6].x)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_PIP_y", hand_landmarks.landmark[6].y)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_DIP_x", hand_landmarks.landmark[7].x)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_DIP_y", hand_landmarks.landmark[7].y)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_Tip_x", hand_landmarks.landmark[8].x)
+#                 setattr(self, "Hand_" + str(id) + "_Index_Finger_Tip_y", hand_landmarks.landmark[8].y)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_MCP_x", hand_landmarks.landmark[9].x)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_MCP_y", hand_landmarks.landmark[9].y)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_PIP_x", hand_landmarks.landmark[10].x)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_PIP_y", hand_landmarks.landmark[10].y)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_DIP_x", hand_landmarks.landmark[11].x)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_DIP_y", hand_landmarks.landmark[11].y)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_Tip_x", hand_landmarks.landmark[12].x)
+#                 setattr(self, "Hand_" + str(id) + "_Middle_Finger_Tip_y", hand_landmarks.landmark[12].y)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_MCP_x", hand_landmarks.landmark[13].x)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_MCP_y", hand_landmarks.landmark[13].y)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_PIP_x", hand_landmarks.landmark[14].x)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_PIP_y", hand_landmarks.landmark[14].y)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_DIP_x", hand_landmarks.landmark[15].x)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_DIP_y", hand_landmarks.landmark[15].y)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_Tip_x", hand_landmarks.landmark[16].x)
+#                 setattr(self, "Hand_" + str(id) + "_Ring_Finger_Tip_y", hand_landmarks.landmark[16].y)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_MCP_x", hand_landmarks.landmark[17].x)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_MCP_y", hand_landmarks.landmark[17].y)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_PIP_x", hand_landmarks.landmark[18].x)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_PIP_y", hand_landmarks.landmark[18].y)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_DIP_x", hand_landmarks.landmark[19].x)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_DIP_y", hand_landmarks.landmark[19].y)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_Tip_x", hand_landmarks.landmark[20].x)
+#                 setattr(self, "Hand_" + str(id) + "_Pinky_Tip_y", hand_landmarks.landmark[20].y)                
+
+#     def draw_all_landmark_circle(self, img):
+#         if self.detected:
+#             for hand_landmarks in self.Pixel_Landmark:
+#                 for id, lm in enumerate(hand_landmarks.landmark):
+#                     cx, cy = int(lm.x * img.shape[1]), int(lm.y * img.shape[0])
+#                     cv2.circle(img, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
+
+#     def draw_all_landmark_drawing_utils(self, img):
+#         if self.detected:
+#             for hand_landmarks in self.Pixel_Landmark:
+#                 self.mp_drawing.draw_landmarks(
+#                     img,
+#                     hand_landmarks,
+#                     self.AI_model.HAND_CONNECTIONS,
+#                     self.mp_drawing_styles.get_default_hand_landmarks_style(),
+#                     self.mp_drawing_styles.get_default_hand_connections_style(),
+#                     )
