@@ -82,12 +82,12 @@ class control(object):
                 """
                 Initialize new page
                 """
-                # self.graphics.init_page()
+                self.graphics.init_page()
 
                 if self.model.CV2_class == None:
                     self.model.CV2_class = CV2_engine()
                 self.model.FPS_class = FPS_engine()
-                if self.model.currentstate == 1:
+                if self.model.currentstate == 2:
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
                 # elif self.model.currentstate == 3:
                 #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
@@ -113,8 +113,9 @@ class control(object):
 
                 try:
                     # Mediapipe Pose
-                    if self.model.currentstate == 1:
+                    if self.model.currentstate == 2:
                         self.model.Mediapipe_pose_class.process_image(self.model.img)
+                        # self.model.Mediapipe_pose_class.expand_landmark()
                     
                     # Mediapipe Hand
                     # elif self.model.currentstate == 3:
