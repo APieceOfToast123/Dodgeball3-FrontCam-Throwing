@@ -30,7 +30,11 @@ class PauseEvent(Event):
 class StandardizeEvent(Event):
     def __init__(self):
         self.name = "Standardize event"
-        
+
+class ThrowEvent(Event):
+    def __init__(self):
+        self.name = "Throw event"
+
 class DirectionEvent(Event):
     """
     Direction event.

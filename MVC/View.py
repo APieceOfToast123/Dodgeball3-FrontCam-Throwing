@@ -54,8 +54,15 @@ class UI_View(object):
         # Display FPS
         self.model.FPS_class.display_FPS(self.model.img)
         try:
+            
+            if self.model.currentstate == 1:
+            # display the first page
+                pass
+
+
+
             # Display Mediapipe Pose landmarks
-            if self.model.currentstate == 2:
+            if self.model.currentstate == 3:
                 # self.model.Mediapipe_pose_class.draw_all_landmark_circle(self.model.img) # ctrl / to comment
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
                 # self.model.Mediapipe_pose_class.draw_all_landmark_drawing_utils(self.model.img)
@@ -107,7 +114,7 @@ class UI_View(object):
         self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
 
         # blit the image onto the screen
-        self.model.screen.blit(self.model.img, (0, 0))
+        self.model.screen.blit(self.model.img, (-320, 0))
         
         # Draw button
         self.model.add_button.draw(self.model.screen)

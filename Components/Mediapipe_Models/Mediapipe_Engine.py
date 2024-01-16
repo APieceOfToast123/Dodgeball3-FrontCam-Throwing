@@ -1,3 +1,4 @@
+from MVC.EventManager import *
 import mediapipe
 import cv2
 import numpy as np
@@ -157,9 +158,9 @@ class mediapipe_pose_engine():
                     self.hint = "No twisting"
                     self.max_level = 0
          
-                    
-        if self.shoulder_angle < 10:
+        elif self.shoulder_angle < 10:
             self.max_level = 0
+            self.model.evManager.Post(ThrowEvent())
         
         self.prev_angle = self.shoulder_angle
 
