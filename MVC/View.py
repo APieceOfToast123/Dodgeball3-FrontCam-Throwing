@@ -128,10 +128,7 @@ class UI_View(object):
         elif self.model.Mediapipe_pose_class.max_level == 2:
             pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
         elif self.model.Mediapipe_pose_class.max_level == 3:
-            
             pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
-       
-        # print(self.model.Mediapipe_pose_class.shoulder_angle)
 
        
         # Update the screen
