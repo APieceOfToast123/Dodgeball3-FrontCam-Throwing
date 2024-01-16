@@ -6,6 +6,7 @@ import pygame.freetype
 import cv2
 from Components.Button.Button import button
 from Components.Sprite_Engine.Sprite import sprite_engine
+# from Components.Mediapipe_Models.Mediapipe_Engine import mediapipe_pose_engine
 import numpy as np
 class UI_View(object):
     def __init__(self, evManager, model):
@@ -121,12 +122,12 @@ class UI_View(object):
         white = (255, 255, 255)
         green = (0, 255, 0)
         pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
-        if self.model.Mediapipe_pose_class.hint == "Level One":
+        if self.model.Mediapipe_pose_class.max_level == 1:
             
             pygame.draw.rect(self.model.screen, green, (50, 50, 100, 50)) 
-        elif self.model.Mediapipe_pose_class.hint == "Level Two":
+        elif self.model.Mediapipe_pose_class.max_level == 2:
             pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
-        elif self.model.Mediapipe_pose_class.hint == "Level Three":
+        elif self.model.Mediapipe_pose_class.max_level == 3:
             
             pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
        
