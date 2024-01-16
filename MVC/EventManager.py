@@ -14,10 +14,33 @@ class QuitEvent(Event):
     """
     Quit event.
     """
-    
     def __init__ (self):
         self.name = "Quit event"
+
+
+class PlayEvent(Event):
+    def __init__(self):
+        self.name = "Play event"
+
+class PauseEvent(Event):
+    def __init__(self):
+        self.name = "Pause event"
+
+
+class StandardizeEvent(Event):
+    def __init__(self):
+        self.name = "Standardize event"
+        
+class DirectionEvent(Event):
+    """
+    Direction event.
+    """
     
+    def __init__ (self, direction):
+        self.name = "Direction event"
+        self.direction = direction
+    def __str__(self):
+        return '%s, direction=%s' % (self.name, self.direction)
     
 class TickEvent(Event):
     """

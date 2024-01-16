@@ -4,7 +4,6 @@ def run():
     # MVC
     evManager = EventManager()
     gamemodel = GameEngine(evManager)
-    
     controller = control(evManager, gamemodel)
     gamemodel.run()
 

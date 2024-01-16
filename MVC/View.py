@@ -7,7 +7,8 @@ import cv2
 from Components.Button.Button import button
 from Components.Sprite_Engine.Sprite import sprite_engine
 # from Components.Mediapipe_Models.Mediapipe_Engine import mediapipe_pose_engine
-import numpy as np
+# import numpy as np
+import time
 class UI_View(object):
     def __init__(self, evManager, model):
         self.evManager = evManager
@@ -115,15 +116,19 @@ class UI_View(object):
         # Draw sprite
         self.model.bun_sprite.draw(self.model.bun_sprite_time)
        
+     
+
+
         '''
         Move this part to progress_bar component later
         '''
+
+        
         # progress bar
         white = (255, 255, 255)
         green = (0, 255, 0)
         pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
         if self.model.Mediapipe_pose_class.max_level == 1:
-            
             pygame.draw.rect(self.model.screen, green, (50, 50, 100, 50)) 
         elif self.model.Mediapipe_pose_class.max_level == 2:
             pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
@@ -135,4 +140,5 @@ class UI_View(object):
         pygame.display.flip()
 
         # limit the redraw speed to 30 frames per second
+        
         self.clock.tick(60)
