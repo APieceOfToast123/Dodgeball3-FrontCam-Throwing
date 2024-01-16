@@ -13,10 +13,12 @@ class GameEngine(object):
         evManager.RegisterListener(self)
         self.state = StateMachine_level_1()
 
-        self.first_state = STATE_POSE
+        self.first_state = 3
 
         self.load_settings_and_data()
-        
+        # delete it later if finished the start_event
+        self.start_time = time.time()
+        self.prev_time =self.start_time 
     def load_settings_and_data(self):
         import pygame
         icon_path = "Resources/Images/icon.png"
@@ -47,9 +49,9 @@ class GameEngine(object):
                 # push a new state on the stack
                 self.state.push(event.state)
 
-        if isinstance(event, StandardizeEvent):
-            self.start_time = time.time()
-            self.prev_time =self.start_time 
+        # if isinstance(event, StandardizeEvent):
+        #     self.start_time = time.time()
+        #     self.prev_time =self.start_time 
 
     def run(self):
         """
