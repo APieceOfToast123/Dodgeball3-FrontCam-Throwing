@@ -31,8 +31,8 @@ class UI_View(object):
             screen_no = 1
         else:
             screen_no = 0
-
-        self.model.screen = pygame.display.set_mode((1280, 720), flags, 16, display = screen_no, vsync=1)
+        self.windowsize =(1280, 720)
+        self.model.screen = pygame.display.set_mode(self.windowsize, flags, 16, display = screen_no, vsync=1)
 
         self.clock = pygame.time.Clock()
 
@@ -60,15 +60,37 @@ class UI_View(object):
                 pass
 
 
+            if self.model.currentstate == 2:
+            # standardize page
+                pass
+
+
 
             # Display Mediapipe Pose landmarks
             if self.model.currentstate == 3:
-                # self.model.Mediapipe_pose_class.draw_all_landmark_circle(self.model.img) # ctrl / to comment
-                # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
-                # self.model.Mediapipe_pose_class.draw_all_landmark_drawing_utils(self.model.img)
+                
+
+                box_color = (200, 200, 200)
+                text_color = (0, 0, 0)
+                # display the count down
+                time_elapsed = time.time() - self.model.prev_time
+                time_left  = 3 - time_elapsed
+                font = pygame.font.Font(None, 36)
+                text_color = (0,255 , 0)
+                text = font.render(str(time_left), True, text_color)
+                text_rect = text.get_rect(center=(self.windowsize[0] // 2, self.windowsize[1] // 2))
+                self.model.screen.blit(text, text_rect)
+
+              
+
+
+                # display the twist direction       
+                text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
+                text_rect2 = text.get_rect(center=(self.windowsize[0] // 3, self.windowsize[1] // 3))
+                
                 self.model.Mediapipe_pose_class.expand_landmark()
-                
-                
+                # print(self.model.Mediapipe_pose_class.direction)
+                # print("aaa")
                 self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
@@ -114,7 +136,7 @@ class UI_View(object):
         self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
 
         # blit the image onto the screen
-        self.model.screen.blit(self.model.img, (-320, 0))
+        self.model.screen.blit(self.model.img, (0, 0))
         
         # Draw button
         self.model.add_button.draw(self.model.screen)
@@ -142,7 +164,10 @@ class UI_View(object):
         elif self.model.Mediapipe_pose_class.max_level == 3:
             pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
 
-       
+
+        # Display the countdown
+        self.model.screen.blit(text, text_rect)
+        self.model.screen.blit(text2, text_rect2)
         # Update the screen
         pygame.display.flip()
 

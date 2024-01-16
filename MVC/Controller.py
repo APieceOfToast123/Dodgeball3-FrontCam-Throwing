@@ -25,12 +25,12 @@ class control(object):
         self.graphics.initialize()
 
     def input_event(self):
-        # if self.model.add_button.CheckisClicked() == 'clicked':
-        #     self.model.currentstate += 1
-        #     self.evManager.Post(StateChangeEvent(self.model.currentstate))
-        # elif self.model.minus_button.CheckisClicked() == 'clicked':
-        #     self.model.currentstate -= 1
-        #     self.evManager.Post(StateChangeEvent(self.model.currentstate))
+        if self.model.add_button.CheckisClicked() == 'clicked':
+            self.model.currentstate += 1
+            self.evManager.Post(StateChangeEvent(self.model.currentstate))
+        elif self.model.minus_button.CheckisClicked() == 'clicked':
+            self.model.currentstate -= 1
+            self.evManager.Post(StateChangeEvent(self.model.currentstate))
 
         self.model.input_event = pygame.event.get()    
         # Called for each game tick. We check our keyboard presses here.
@@ -90,7 +90,7 @@ class control(object):
                 if self.model.CV2_class == None:
                     self.model.CV2_class = CV2_engine()
                 self.model.FPS_class = FPS_engine()
-                if self.model.currentstate == 2:
+                if self.model.currentstate == 3:
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
                 # elif self.model.currentstate == 3:
                 #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
@@ -116,7 +116,7 @@ class control(object):
 
                 try:
                     # Mediapipe Pose
-                    if self.model.currentstate == 2:
+                    if self.model.currentstate == 3:
                         self.model.Mediapipe_pose_class.process_image(self.model.img)
                         # self.model.Mediapipe_pose_class.expand_landmark()
                 except Exception as e:
@@ -124,13 +124,20 @@ class control(object):
                     import traceback
                     traceback.print_exc()
 
-                if time.time() - self.model.prev_time == 3:
-                    self.model.MediaPipe_pose_class.generate_direction()
-                    self.model.prev_time = time.time()
-                
-                if time.time() - self.mdoel.start_time == 60:
-                    self.evManager.Post(PauseEvent())
+                print(time.time() - self.model.prev_time)
+                if 0 <(time.time() - self.model.prev_time -3) < 1:
+                    if self.model.Mediapipe_pose_class != None:
+                     self.model.Mediapipe_pose_class.generate_random_direction()
+                     self.model.prev_time = time.time()
+                     print(time.time() - self.model.prev_time)
+                     print("change the direction")
+                    else:
+                        print("didn't change direction")
                     
+                # 不能使用等于号
+                if time.time() - self.model.start_time == 60:
+                    self.evManager.Post(PauseEvent())
+
                 """
                 Tell view to render after all Business Logic
                 """
