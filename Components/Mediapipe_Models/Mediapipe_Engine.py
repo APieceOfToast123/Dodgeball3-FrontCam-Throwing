@@ -125,15 +125,15 @@ class mediapipe_pose_engine():
 
        
     def draw_shoulder_line(self, img):
-        
+        self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
+        self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
+        self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
         cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)
         cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
 
-    def right_ball(self,img):
-        self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
-        self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
-        self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
+    def right_ball(self):
+        
         x_diff = np.abs(self.Right_Shoulder_x - self.median_x_coor)
         z_diff = np.abs(self.Right_Shoulder_z - self.median_z_coor)
         
