@@ -106,7 +106,7 @@ class UI_View(object):
         self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
 
         # blit the image onto the screen
-        self.model.screen.blit(self.model.img, (0, 0))
+        self.model.screen.blit(self.model.img, (-320, 0))
         
         # Draw button
         self.model.add_button.draw(self.model.screen)
