@@ -25,24 +25,44 @@ class control(object):
         self.graphics.initialize()
 
     def input_event(self):
+        if self.model.add_button.CheckisClicked() == 'clicked':
+            self.model.currentstate += 1
+            self.evManager.Post(StateChangeEvent(self.model.currentstate))
+        elif self.model.minus_button.CheckisClicked() == 'clicked':
+            self.model.currentstate -= 1
+            self.evManager.Post(StateChangeEvent(self.model.currentstate))
+
         self.model.input_event = pygame.event.get()    
         # Called for each game tick. We check our keyboard presses here.
 
         for event in self.model.input_event:
+
             # handle window manager closing our window
             if event.type == pygame.QUIT:
                 self.graphics.quit_pygame()
                 self.evManager.Post(QuitEvent())
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.model.MainPage_PlayerButton.checkForInput(self.model.Menu_Mouse_Pos):
-                    self.model.currentstate = 2
-                    self.evManager.Post(StateChangeEvent(self.model.currentstate))
-                if self.model.MainPage_OptionButton.checkForInput(self.model.Menu_Mouse_Pos):
-                    self.model.currentstate = 5
-                    self.evManager.Post(StateChangeEvent(self.model.currentstate))
-                if self.model.MainPage_QuitButton.checkForInput(self.model.Menu_Mouse_Pos):
-                    self.graphics.quit_pygame()
-                    self.evManager.Post(QuitEvent())
+
+            # handle key down events
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_ESCAPE:
+            #         self.evManager.Post(StateChangeEvent(None))
+
+                # # check key press for 1, 2, 3, 4, 5; if not same as current state, change state
+                # elif event.key == pygame.K_1:
+                #     self.evManager.Post(StateChangeEvent(1))
+
+                # elif event.key == pygame.K_2:
+                #     self.evManager.Post(StateChangeEvent(2))
+
+                # elif event.key == pygame.K_3:
+                #     self.evManager.Post(StateChangeEvent(3))
+
+                # elif event.key == pygame.K_4:
+                #     self.evManager.Post(StateChangeEvent(4))
+
+                # elif event.key == pygame.K_5:
+                #     self.evManager.Post(StateChangeEvent(5))
+
 
     def notify(self, event):
         """
@@ -66,108 +86,57 @@ class control(object):
                 Initialize new page
                 """
                 self.graphics.init_page()
-                
-                # If camera is needed, initialize camera
-                if self.model.currentstate == 2 or self.model.currentstate == 3:
-                    if self.model.CV2_class == None:
-                        self.model.CV2_class = CV2_engine()
-                    self.model.FPS_class = FPS_engine()
+
+                if self.model.CV2_class == None:
+                    self.model.CV2_class = CV2_engine()
+                self.model.FPS_class = FPS_engine()
+                if self.model.currentstate == 3:
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
-                    # elif self.model.currentstate == 3:
-                    #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
-                    # elif self.model.currentstate == 4:
-                    #     self.model.Mediapipe_FaceMesh_class = mediapipe_face_mesh_engine()
-                    # elif self.model.currentstate == 5:
-                    #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
-                    print("New page initialized")
-                    # self.model.segmentation_class = segmentation_engine()
-                    
-                    self.pageinitilized = True
-
-                    """
-                    Handle all Business Logic
-                    """
-                    
-                    # Get camera image from CV2
-                    self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
-                    
-                    if self.model.success:
-                        # Calculate FPS
-                        self.model.FPS_class.calculate_FPS()
-
-                        try:
-                            # Mediapipe Pose
-                            if self.model.currentstate == 3:
-                                self.model.Mediapipe_pose_class.process_image(self.model.img)
-                                # self.model.Mediapipe_pose_class.expand_landmark()
-
-                                if time.time() - self.model.prev_time == 3:
-                                    self.model.MediaPipe_pose_class.generate_direction()
-                                    self.model.prev_time = time.time()
-                            
-                                if time.time() - self.mdoel.start_time == 60:
-                                    self.evManager.Post(PauseEvent())
-
-                        except Exception as e:
-                            print(e)
-                            import traceback
-                            traceback.print_exc()
-            
-                else:
-                    pass       
-            
-            
-
-            #     if self.model.CV2_class == None:
-            #         self.model.CV2_class = CV2_engine()
-            #     self.model.FPS_class = FPS_engine()
-            #     if self.model.currentstate == 3:
-            #         self.model.Mediapipe_pose_class = mediapipe_pose_engine()
-            #     # elif self.model.currentstate == 3:
-            #     #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
-            #     # elif self.model.currentstate == 4:
-            #     #     self.model.Mediapipe_FaceMesh_class = mediapipe_face_mesh_engine()
-            #     # elif self.model.currentstate == 5:
-            #     #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
-            #     print("New page initialized")
-            #     # self.model.segmentation_class = segmentation_engine()
+                # elif self.model.currentstate == 3:
+                #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
+                # elif self.model.currentstate == 4:
+                #     self.model.Mediapipe_FaceMesh_class = mediapipe_face_mesh_engine()
+                # elif self.model.currentstate == 5:
+                #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
+                print("New page initialized")
+                # self.model.segmentation_class = segmentation_engine()
                 
-            #     self.pageinitilized = True
+                self.pageinitilized = True
             
-            # """
-            # Handle all Business Logic
-            # """
+            """
+            Handle all Business Logic
+            """
             
-            # # Get camera image from CV2
-            # self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
+            # Get camera image from CV2
+            self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
             
-            # if self.model.success:
-            #     # Calculate FPS
-            #     self.model.FPS_class.calculate_FPS()
+            if self.model.success:
+                # Calculate FPS
+                self.model.FPS_class.calculate_FPS()
 
-            #     try:
-            #         # Mediapipe Pose
-            #         if self.model.currentstate == 3:
-            #             self.model.Mediapipe_pose_class.process_image(self.model.img)
-            #             # self.model.Mediapipe_pose_class.expand_landmark()
-            #     except Exception as e:
-            #         print(e)
-            #         import traceback
-            #         traceback.print_exc()
+                try:
+                    # Mediapipe Pose
+                    if self.model.currentstate == 3:
+                        self.model.Mediapipe_pose_class.process_image(self.model.img)
+                        # self.model.Mediapipe_pose_class.expand_landmark()
+                except Exception as e:
+                    print(e)
+                    import traceback
+                    traceback.print_exc()
 
-            #     print(time.time() - self.model.prev_time)
-            #     if 0 <(time.time() - self.model.prev_time -3) < 1:
-            #         if self.model.Mediapipe_pose_class != None:
-            #          self.model.Mediapipe_pose_class.generate_random_direction()
-            #          self.model.prev_time = time.time()
-            #          print(time.time() - self.model.prev_time)
-            #          print("change the direction")
-            #         else:
-            #             print("didn't change direction")
+                print(time.time() - self.model.prev_time)
+                if 0 <(time.time() - self.model.prev_time -3) < 1:
+                    if self.model.Mediapipe_pose_class != None:
+                     self.model.Mediapipe_pose_class.generate_random_direction()
+                     self.model.prev_time = time.time()
+                     print(time.time() - self.model.prev_time)
+                     print("change the direction")
+                    else:
+                        print("didn't change direction")
                     
-            #     # 不能使用等于号
-            #     if time.time() - self.model.start_time == 60:
-            #         self.evManager.Post(PauseEvent())
+                # 不能使用等于号
+                if time.time() - self.model.start_time == 60:
+                    self.evManager.Post(PauseEvent())
 
                 """
                 Tell view to render after all Business Logic

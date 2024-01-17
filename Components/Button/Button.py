@@ -1,29 +1,62 @@
-class Button():
-	def __init__(self, image, pos, text_input, font, base_color, hovering_color):
-		self.image = image
-		self.x_pos = pos[0]
-		self.y_pos = pos[1]
-		self.font = font
-		self.base_color, self.hovering_color = base_color, hovering_color
-		self.text_input = text_input
-		self.text = self.font.render(self.text_input, True, self.base_color)
-		if self.image is None:
-			self.image = self.text
-		self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
-		self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+import pygame
+import time
 
-	def update(self, screen):
-		if self.image is not None:
-			screen.blit(self.image, self.rect)
-		screen.blit(self.text, self.text_rect)
+# Button with different stages: Normal, Hovered, Clicked
+class button():
+    def __init__(self, pos, pathImg, model, scale=1):
 
-	def checkForInput(self, position):
-		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-			return True
-		return False
+        self.model = model
 
-	def changeColor(self, position):
-		if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-			self.text = self.font.render(self.text_input, True, self.hovering_color)
-		else:
-			self.text = self.font.render(self.text_input, True, self.base_color)
+        img = pygame.image.load(pathImg).convert_alpha()
+
+        self.width, self.height = img.get_size()
+        img = pygame.transform.smoothscale(img, (int(self.width * scale), int(self.height * scale)))
+
+        # Split image to get frame for each stage
+        self.width, self.height = img.get_size()
+        self.heightSingleFrame = int(self.height / 3)
+        self.imgList = []
+
+        for i in range(3):
+            imgCrop = img.subsurface((0, i * self.heightSingleFrame, self.width, self.heightSingleFrame))
+            self.imgList.append(imgCrop)
+
+        self.img = self.imgList[0]
+        self.rectImg = self.imgList[0].get_rect()
+        self.pos = pos
+        self.rectImg.center = self.pos
+        self.control_time = 0.35
+        self.button_control_time = time.time()
+
+    def draw(self, surface):
+        surface.blit(self.img, self.rectImg)
+
+    def CheckisClicked(self):
+        self.state = None
+        # Get mouse position to check if inside button
+        posMouse = pygame.mouse.get_pos()
+        self.img = self.imgList[0]
+
+        if self.rectImg.collidepoint(posMouse):
+            if pygame.mouse.get_pressed()[0] and time.time() - self.button_control_time > self.control_time:
+                self.img = self.imgList[2]  # Clicked
+                
+                if self.state != "clicked":
+
+                    self.state = 'clicked'
+                    self.button_control_time = time.time()
+                    # clear all pygame.key.get_pressed() event
+                    pygame.event.clear()
+                else:
+                    self.state = None
+            else:    
+                self.img = self.imgList[1]  # Hovered
+                if self.state != "hover" and self.state != "clicked":
+
+                    self.state = 'hover'
+                else:
+                    self.state = None
+        else:
+            self.state = None
+            
+        return self.state
