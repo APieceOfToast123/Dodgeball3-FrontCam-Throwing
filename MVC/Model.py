@@ -19,6 +19,8 @@ class GameEngine(object):
         # delete it later if finished the start_event
         self.start_time = time.time()
         self.prev_time =self.start_time 
+        self.total_score = 0
+        self.hit_goal = False
     def load_settings_and_data(self):
         import pygame
         icon_path = "Resources/Images/icon.png"

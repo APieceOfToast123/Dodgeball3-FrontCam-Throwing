@@ -78,36 +78,44 @@ class UI_View(object):
                 font_thickness = 2
                 font_color = (255, 255, 255)  # 白色
 
-                # 设置方框的位置和大小
-                box_position = (300, 50)
-                box_size = (100, 100)
+               
+                
                 box_color = (0, 0, 255)  # 红色
 
                 image_height, image_width, _ = self.model.img.shape
                 
-                time_elapsed = time.time() - self.model.prev_time
-                time_left  = 3 - time_elapsed
+               
+                self.model.time_left  = 3 - self.model.elapsed_time
 
 
             # display the count down
-                
+             # 设置方框的位置和大小
+                box_position = (400, 50)
+                box_size = (100, 100)
                 cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
-                text_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
-                cv2.putText(self.model.img, "{:.0f}".format(time_left), text_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
-                # display the twist direction       
-                # text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
-
-
+                text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 2)
+                cv2.putText(self.model.img, "{:.0f}".format(self.model.time_left), text_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
 
             # display the twist direction
                 text2 = "please twist {}".format(self.model.Mediapipe_pose_class.direction)
+                box_size = (500,100 )
                 box_position = (900, 50)
                 text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
                 cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
                 cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
                 
-
-                # 显示图像
+            # display the score
+                text3 = "Score:{}  ".format(self.model.total_score)
+                text3 = text3+("Missed" if self.model.hit_goal == False else "Hit")
+                box_size = (300,100)
+                box_position = (900,400)
+                text3_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
+                cv2.putText(self.model.img, text3, text3_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
+                
+                
+                
+            # 显示图像
                 self.model.Mediapipe_pose_class.expand_landmark()
                 # print(self.model.Mediapipe_pose_class.direction)
                 # print("aaa")

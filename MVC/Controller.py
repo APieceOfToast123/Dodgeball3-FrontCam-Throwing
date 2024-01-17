@@ -124,20 +124,38 @@ class control(object):
                     import traceback
                     traceback.print_exc()
 
-                self.model.left_time = time.time() - self.model.prev_time
-                
-                if 0 <self.model.left_time < 1:
+                self.model.elapsed_time = time.time() - self.model.prev_time
+
+                if 0 <self.model.elapsed_time -3 < 1:
                     if self.model.Mediapipe_pose_class != None:
-                     self.model.Mediapipe_pose_class.generate_random_direction()
-                     self.model.prev_time = time.time()
-                     print(time.time() - self.model.prev_time)
-                     print("change the direction")
-                    else:
-                        print("didn't change direction")
+                    #   time.sleep(1)
+                    
+                      if self.model.Mediapipe_pose_class.max_level == 1:
+                        if (random.uniform(0, 1) > 0.2):
+                            self.model.hit_goal = True 
+                            self.model.total_score += 50
+                        else:
+                            self.model.hit_goal = False
+                      elif self.model.Mediapipe_pose_class.max_level == 2:
+                        if (random.uniform(0, 1) > 0.1):
+                            self.model.hit_goal = True  
+                            self.model.total_score += 50
+                        else: 
+                            self.model.hit_goal = False
+                      elif self.model.Mediapipe_pose_class.max_level == 3:
+                        self.model.hit_goal = True 
+                        self.model.total_score += 50
+                    
+                      self.model.Mediapipe_pose_class.generate_random_direction()
+                      self.model.prev_time = time.time()
+                      print(time.time() - self.model.prev_time)
+                      print("change the direction")
+                
                     
                 #判断60s是否结束
                 self.model.total_left_time = time.time() - self.model.start_time
-                if 0 <self.model.total_left_time - 60 < 1:
+                if 0 <self.model.total_left_time - 80 < 1:
+                # 如果结束，发送结束事件，转移状态，将pauseEvent g改为 StateChangeEvent
                     self.evManager.Post(PauseEvent())
 
                 """

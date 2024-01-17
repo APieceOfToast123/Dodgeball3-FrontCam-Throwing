@@ -22,7 +22,7 @@ class mediapipe_pose_engine():
         self.prev_angle= 0
         self.max_level = 0
         self.direction = "right"
-
+        
 
     def process_image(self, img):
         try:
@@ -118,11 +118,11 @@ class mediapipe_pose_engine():
                     
                 elif self.shoulder_angle < 8:
                     self.hint = "No twisting"
-                    self.max_level = 0
-         
+                    # self.max_level = 0
                     # cv2.putText(self.model.img, self.hint, (int(self.median_x_coor * self.model.img.shape[1]), int(self.median_y_coor * self.model.img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-        if self.shoulder_angle < 10:
+        else:
             self.max_level = 0
+        
         
 
         # self.angles.append(np.degrees(self.shoulder_angle))
