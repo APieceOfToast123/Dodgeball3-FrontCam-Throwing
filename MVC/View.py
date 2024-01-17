@@ -22,6 +22,7 @@ class UI_View(object):
         pygame.init()
         pygame.font.init()
         pygame.freetype.init()
+        pygame.mixer.init()
 
         pygame.display.set_caption('Throw Dodgeball')
 
@@ -66,6 +67,11 @@ class UI_View(object):
             
             self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.MainPage_QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            
+            # Display background music
+            pygame.mixer.music.load(self.model.MainPage_BGM_path)
+            pygame.mixer.music.play(-1)
+            print("BGM Time")
 
 
     def render(self):
@@ -99,9 +105,6 @@ class UI_View(object):
                 text = font.render(str(time_left), True, text_color)
                 text_rect = text.get_rect(center=(self.windowsize[0] // 2, self.windowsize[1] // 2))
                 self.model.screen.blit(text, text_rect)
-
-              
-
 
                 # display the twist direction       
                 text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)

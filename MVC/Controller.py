@@ -80,8 +80,6 @@ class control(object):
                     #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
                     print("New page initialized")
                     # self.model.segmentation_class = segmentation_engine()
-                    
-                    self.pageinitilized = True
 
                     """
                     Handle all Business Logic
@@ -114,13 +112,13 @@ class control(object):
             
                 else:
                     pass       
+                
+                self.pageinitilized = True
             
-            
-                """
-                Tell view to render after all Business Logic
-                """
-              
-                self.graphics.render()
+            """
+            Tell view to render after all Business Logic
+            """
+            self.graphics.render()
 
             self.input_event()
             

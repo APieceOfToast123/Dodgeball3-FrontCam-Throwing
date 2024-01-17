@@ -32,6 +32,8 @@ class GameEngine(object):
         self.MainPage_OptionButton_path = "Resources/Images/Options Rect.png"
         self.MainPage_QuitButton_path = "Resources/Images/Quit Rect.png"
 
+        self.MainPage_BGM_path = "Resources/Musics/Title_Music.wav"
+
     def get_font(self, size): # Returns Press-Start-2P in the desired size
         pygame.font.init()
         return pygame.font.Font("Resources/Fonts/font.ttf", size)
