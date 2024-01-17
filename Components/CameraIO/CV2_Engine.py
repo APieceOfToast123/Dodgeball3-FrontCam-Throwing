@@ -10,7 +10,7 @@ class CV2_engine():
 
     def read_camera(self):
         success, self.img = self.cap.read()
-        return success, self.img[:,0:int(self.img.shape[1]*3/4)]
+        return success, self.img[:,int(self.img.shape[1]*1/4):int(self.img.shape[1]*3/4)]
     
     def display_camera(self, img=None):
         if img is None:

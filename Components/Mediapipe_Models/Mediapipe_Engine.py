@@ -24,16 +24,17 @@ class mediapipe_pose_engine():
 
 
     def process_image(self, img):
-        try:
-            results = self.AI_model_initialized.process(img)
-            if results.pose_landmarks:
-                self.Pixel_Landmark_list = results.pose_landmarks
-                self.Pixel_Landmark = results.pose_landmarks.landmark
-                self.World_Landmark = results.pose_world_landmarks.landmark
-            else:
-                cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 3)
-        except:
-            pass
+        self.results = self.AI_model_initialized.process(img)
+        
+        if self.results.pose_landmarks:
+            self.pose_detected = True
+            self.Pose_Pixel_Landmark_list = self.results.pose_landmarks
+            self.Pose_Pixel_Landmark = self.results.pose_landmarks.landmark
+            self.Pose_World_Landmark = self.results.pose_world_landmarks.landmark
+        else:
+            self.pose_detected = False
+            cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+            
         """
         self.Pose_Landmark.landmark[0]
         x = self.Pose_Landmark.landmark[0].x

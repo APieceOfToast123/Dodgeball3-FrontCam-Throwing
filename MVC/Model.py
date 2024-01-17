@@ -27,12 +27,16 @@ class GameEngine(object):
         pygame.display.set_icon(pygame_icon)
 
         self.MainPage_BG_path = "Resources/Images/MainPage_BG.jpg"
+        # self.Standardize_BG_path = "Resources/Images/Standardize_BG.jpg"
 
         self.MainPage_PlayerButton_path = "Resources/Images/Play Rect.png"
         self.MainPage_OptionButton_path = "Resources/Images/Options Rect.png"
         self.MainPage_QuitButton_path = "Resources/Images/Quit Rect.png"
 
         self.MainPage_BGM_path = "Resources/Musics/Title_Music.wav"
+        self.StandarizedPage_BGM_path = "Resources/Musics/Standardized_Music.wav"
+        self.GamePage_BGM_path = "Resources/Musics/Game_Music.ogg"
+
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
         pygame.font.init()

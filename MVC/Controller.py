@@ -43,19 +43,20 @@ class control(object):
                 if self.model.MainPage_QuitButton.checkForInput(self.model.Menu_Mouse_Pos):
                     self.graphics.quit_pygame()
                     self.evManager.Post(QuitEvent())
+                else:
+                    pass
 
     def notify(self, event):
         """
         Receive events posted to the message queue. 
         """
         if isinstance(event, InitializeEvent):
-            self.initialize()
-        
-       
+            self.initialize()     
 
         # if the state is changing, reset the pageinitilized flag
         elif isinstance(event, StateChangeEvent):
             self.pageinitilized = False
+            self.graphics.state_change_pygame()
             print("State change event")
 
         elif isinstance(event, TickEvent):
@@ -64,56 +65,45 @@ class control(object):
             if self.pageinitilized == False:
                 """
                 Initialize new page
-                """
-                self.graphics.init_page()
-                
+                """                
                 if self.model.currentstate == 2 or self.model.currentstate == 3:
                     if self.model.CV2_class == None:
                         self.model.CV2_class = CV2_engine()
                     self.model.FPS_class = FPS_engine()
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
-                    # elif self.model.currentstate == 3:
-                    #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
-                    # elif self.model.currentstate == 4:
-                    #     self.model.Mediapipe_FaceMesh_class = mediapipe_face_mesh_engine()
-                    # elif self.model.currentstate == 5:
-                    #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
-                    print("New page initialized")
-                    # self.model.segmentation_class = segmentation_engine()
 
-                    """
-                    Handle all Business Logic
-                    """
-                    
-                    # Get camera image from CV2
-                    self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
-                    
-                    if self.model.success:
-                        # Calculate FPS
-                        self.model.FPS_class.calculate_FPS()
-
-                        try:
-                            # Mediapipe Pose
-                            if self.model.currentstate == 3:
-                                self.model.Mediapipe_pose_class.process_image(self.model.img)
-                                # self.model.Mediapipe_pose_class.expand_landmark()
-
-                                if time.time() - self.model.prev_time == 3:
-                                    self.model.MediaPipe_pose_class.generate_direction()
-                                    self.model.prev_time = time.time()
-                            
-                                if time.time() - self.mdoel.start_time == 60:
-                                    self.evManager.Post(PauseEvent())
-
-                        except Exception as e:
-                            print(e)
-                            import traceback
-                            traceback.print_exc()
-            
                 else:
                     pass       
-                
+
+                self.graphics.init_page()
+                print("New page initialized")
+
                 self.pageinitilized = True
+
+            """
+            Handle all Business Logic
+            """
+            if self.model.currentstate == 2 or self.model.currentstate == 3:
+
+                # Get camera image from CV2
+                self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
+                
+                if self.model.success:
+                    # Calculate FPS
+                    self.model.FPS_class.calculate_FPS()
+
+
+                    # Mediapipe Pose
+                    self.model.Mediapipe_pose_class.process_image(self.model.img)
+                    # self.model.Mediapipe_pose_class.expand_landmark()
+                    if self.model.currentstate == 3:
+                        if time.time() - self.model.prev_time == 3:
+                            self.model.MediaPipe_pose_class.generate_direction()
+                            self.model.prev_time = time.time()
+                            
+                        if time.time() - self.mdoel.start_time == 60:
+                            self.evManager.Post(PauseEvent())
+           
             
             """
             Tell view to render after all Business Logic
