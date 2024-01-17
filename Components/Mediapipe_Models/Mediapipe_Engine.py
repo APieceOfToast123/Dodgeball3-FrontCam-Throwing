@@ -1,3 +1,4 @@
+from MVC.EventManager import *
 import mediapipe
 import cv2
 import numpy as np
@@ -20,7 +21,7 @@ class mediapipe_pose_engine():
         self.shoulder_angle = 0
         self.prev_angle= 0
         self.max_level = 0
-        self.direction = None
+        self.direction = "right"
 
 
     def process_image(self, img):
@@ -76,10 +77,14 @@ class mediapipe_pose_engine():
         self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
         self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
         cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)
+
+        
         if self.direction == "right":
             self.right_ball()
+           
         else:
-            self.left_ball(img)
+            self.left_ball()
+           
         cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
 
@@ -95,7 +100,7 @@ class mediapipe_pose_engine():
         
         if self.right_twist:
             # 5，20，40，60
-                print(self.accumulate)
+                # print(self.accumulate)
                 if 12< self.shoulder_angle < 28:
                     self.hint = "Level One"
                     if self.accumulate:
@@ -122,8 +127,10 @@ class mediapipe_pose_engine():
 
         # self.angles.append(np.degrees(self.shoulder_angle))
         self.prev_angle = self.shoulder_angle
+        # print( self.prev_angle)
 
-    def left_ball(self,img):
+
+    def left_ball(self):
         self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
         self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
         self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
@@ -137,7 +144,7 @@ class mediapipe_pose_engine():
         
         if self.left_twist:
             # 5，20，40，60
-                print(self.accumulate)
+                # print(self.accumulate)
                 if 12< self.shoulder_angle < 28:
                     self.hint = "Level One"
                     if self.accumulate:
@@ -157,9 +164,9 @@ class mediapipe_pose_engine():
                     self.hint = "No twisting"
                     self.max_level = 0
          
-                    
-        if self.shoulder_angle < 10:
+        elif self.shoulder_angle < 10:
             self.max_level = 0
+            # self.model.evManager.Post(ThrowEvent())
         
         self.prev_angle = self.shoulder_angle
 

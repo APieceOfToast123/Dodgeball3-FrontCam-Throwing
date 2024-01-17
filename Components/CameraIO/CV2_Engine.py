@@ -2,7 +2,7 @@ import cv2
 
 class CV2_engine():
     def __init__(self):
-        self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # open camer
+        self.cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION) # open camer
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G')) # set codec
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920) # set width
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080) # set height
@@ -10,7 +10,8 @@ class CV2_engine():
 
     def read_camera(self):
         success, self.img = self.cap.read()
-        return success, self.img[:,0:int(self.img.shape[1]*3/4)]
+        # return success, self.img[:,0:int(self.img.shape[1]*3/4)]
+        return success, self.img
     
     def display_camera(self, img=None):
         if img is None:

@@ -32,8 +32,8 @@ class UI_View(object):
             screen_no = 1
         else:
             screen_no = 0
-
-        self.model.screen = pygame.display.set_mode((1280, 720), flags, 16, display = screen_no, vsync=1)
+        self.windowsize =(1280, 720)
+        self.model.screen = pygame.display.set_mode(self.windowsize, flags, 16, display = screen_no, vsync=1)
 
         self.clock = pygame.time.Clock()
 
@@ -77,14 +77,41 @@ class UI_View(object):
                 # If the mouse is hovering over the button, change the color
                 for button in [self.model.MainPage_PlayerButton, self.model.MainPage_OptionButton, self.model.MainPage_QuitButton]:
                     button.changeColor(self.model.Menu_Mouse_Pos)
-                    button.update(self.model.screen)
+                    button.update(self.model.screen)                
+
+            if self.model.currentstate == 2:
+            # standardize page
+                pass
+
+
 
             # Display Mediapipe Pose landmarks
-            elif self.model.currentstate == 2:
+            if self.model.currentstate == 3:
                 # Display FPS
                 self.model.FPS_class.display_FPS(self.model.img)
                 self.model.Mediapipe_pose_class.expand_landmark()
+
+                box_color = (200, 200, 200)
+                text_color = (0, 0, 0)
+                # display the count down
+                time_elapsed = time.time() - self.model.prev_time
+                time_left  = 3 - time_elapsed
+                font = pygame.font.Font(None, 36)
+                text_color = (0,255 , 0)
+                text = font.render(str(time_left), True, text_color)
+                text_rect = text.get_rect(center=(self.windowsize[0] // 2, self.windowsize[1] // 2))
+                self.model.screen.blit(text, text_rect)
+
+              
+
+
+                # display the twist direction       
+                text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
+                text_rect2 = text.get_rect(center=(self.windowsize[0] // 3, self.windowsize[1] // 3))
                 
+                self.model.Mediapipe_pose_class.expand_landmark()
+                # print(self.model.Mediapipe_pose_class.direction)
+                # print("aaa")
                 self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)

@@ -116,6 +116,58 @@ class control(object):
                     pass       
             
             
+
+                if self.model.CV2_class == None:
+                    self.model.CV2_class = CV2_engine()
+                self.model.FPS_class = FPS_engine()
+                if self.model.currentstate == 3:
+                    self.model.Mediapipe_pose_class = mediapipe_pose_engine()
+                # elif self.model.currentstate == 3:
+                #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
+                # elif self.model.currentstate == 4:
+                #     self.model.Mediapipe_FaceMesh_class = mediapipe_face_mesh_engine()
+                # elif self.model.currentstate == 5:
+                #     self.model.Mediapipe_Holistic_class = mediapipe_holistic_engine()
+                print("New page initialized")
+                # self.model.segmentation_class = segmentation_engine()
+                
+                self.pageinitilized = True
+            
+            """
+            Handle all Business Logic
+            """
+            
+            # Get camera image from CV2
+            self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
+            
+            if self.model.success:
+                # Calculate FPS
+                self.model.FPS_class.calculate_FPS()
+
+                try:
+                    # Mediapipe Pose
+                    if self.model.currentstate == 3:
+                        self.model.Mediapipe_pose_class.process_image(self.model.img)
+                        # self.model.Mediapipe_pose_class.expand_landmark()
+                except Exception as e:
+                    print(e)
+                    import traceback
+                    traceback.print_exc()
+
+                print(time.time() - self.model.prev_time)
+                if 0 <(time.time() - self.model.prev_time -3) < 1:
+                    if self.model.Mediapipe_pose_class != None:
+                     self.model.Mediapipe_pose_class.generate_random_direction()
+                     self.model.prev_time = time.time()
+                     print(time.time() - self.model.prev_time)
+                     print("change the direction")
+                    else:
+                        print("didn't change direction")
+                    
+                # 不能使用等于号
+                if time.time() - self.model.start_time == 60:
+                    self.evManager.Post(PauseEvent())
+
                 """
                 Tell view to render after all Business Logic
                 """
