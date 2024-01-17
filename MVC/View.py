@@ -116,7 +116,7 @@ class UI_View(object):
 
             self.display_Title("Game Over", 100, "#F26448", 640, 180)
             self.display_Text("Score: 1000", 50, "#FFFFFF", 640, 280)
-            self.display_Text("Your Wrist Is Very Healthy!", 50, "#FEB009", 640, 365)
+            self.display_Title("Your Wrist Is Very Healthy!", 50, "#FEB009", 640, 365)
 
             self.model.EndPage_PlayerButton = Button(image=pygame.image.load(self.model.PlayerButton_path), pos=(640, 490), 
                                 text_input="PLAY AGAIN", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
