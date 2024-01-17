@@ -18,7 +18,6 @@ class GameEngine(object):
         self.state = StateMachine_level_1()
 
         self.first_state = STATE_MAINPAGE
-        self.first_state = 3
 
         self.load_settings_and_data()
         # delete it later if finished the start_event
@@ -29,7 +28,7 @@ class GameEngine(object):
         pygame_icon = pygame.image.load(icon_path)
         pygame.display.set_icon(pygame_icon)
 
-        self.MainPage_BG_path = "Resources/Images/MainPageBG.png"
+        self.MainPage_BG_path = "Resources/Images/MainPage_BG.jpg"
 
         self.MainPage_PlayerButton_path = "Resources/Images/Play Rect.png"
         self.MainPage_OptionButton_path = "Resources/Images/Options Rect.png"
@@ -38,6 +37,10 @@ class GameEngine(object):
     def get_font(self, size): # Returns Press-Start-2P in the desired size
         pygame.font.init()
         return pygame.font.Font("Resources/Fonts/font.ttf", size)
+    
+    def get_title_font(self, size): # Returns Press-Start-2P in the desired size
+        pygame.font.init()
+        return pygame.font.Font("Resources/Fonts/title_font.ttf", size)
 
     def notify(self, event):
         """
