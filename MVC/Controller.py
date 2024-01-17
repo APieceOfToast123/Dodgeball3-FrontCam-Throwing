@@ -34,13 +34,13 @@ class control(object):
                 self.graphics.quit_pygame()
                 self.evManager.Post(QuitEvent())
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.model.MainPage_PlayerButton.checkForInput(self.model.Menu_Mouse_Pos):
+                if self.model.MainPage_PlayerButton.checkForInput(self.model.Mouse_Pos):
                     self.model.currentstate = 2
                     self.evManager.Post(StateChangeEvent(self.model.currentstate))
-                if self.model.MainPage_OptionButton.checkForInput(self.model.Menu_Mouse_Pos):
-                    self.model.currentstate = 5
+                if self.model.MainPage_OptionButton.checkForInput(self.model.Mouse_Pos):
+                    self.model.currentstate = 4
                     self.evManager.Post(StateChangeEvent(self.model.currentstate))
-                if self.model.MainPage_QuitButton.checkForInput(self.model.Menu_Mouse_Pos):
+                if self.model.MainPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                     self.graphics.quit_pygame()
                     self.evManager.Post(QuitEvent())
                 else:

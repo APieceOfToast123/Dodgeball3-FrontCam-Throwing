@@ -44,6 +44,7 @@ class UI_View(object):
     def quit_pygame(self):
         # shut down the pygame graphics
         self.isinitialized = False
+        self.model.Menu_Mouse_Pos = None
         pygame.quit()
         sys.exit()
 
@@ -58,90 +59,119 @@ class UI_View(object):
 
         # self.model.screen.blit(flash, (0, 0))
 
+    def display_Title(self, text, size, color, x, y):
+        self.model.Text = self.model.get_title_font(size).render(text, True, color)
+        self.model.Rect = self.model.Text.get_rect(center=(x, y))
+        self.model.screen.blit(self.model.Text, self.model.Rect)
+    
+    def display_Text(self, text, size, color, x, y):
+        self.model.Text = self.model.get_font(size).render(text, True, color)
+        self.model.Rect = self.model.Text.get_rect(center=(x, y))
+        self.model.screen.blit(self.model.Text, self.model.Rect)
+
+    """
+    Every time state changes, the page will be reinitialized
+    """
     def init_page(self):
         # self.alpha = 0
 
+        # Main Page Init
         if self.model.currentstate == 1:
             # Display the background
             self.model.MainPage_BG = pygame.transform.scale(pygame.image.load(self.model.MainPage_BG_path), (1280, 720))
             self.model.screen.blit(self.model.MainPage_BG, (0, 0))
 
-            # Display the title
-            self.model.Menu_Text = self.model.get_title_font(120).render("throw dodgeball", True, "#F26448")
-            # Align the text
-            self.model.Menu_Rect = self.model.Menu_Text.get_rect(center=(640, 180))
-            # Display the text on the screen
-            self.model.screen.blit(self.model.Menu_Text, self.model.Menu_Rect)
+            self.display_Title("Throw DodgeBall", 110, "#F26448", 640, 170)
 
-            self.model.MainPage_PlayerButton = Button(image=pygame.image.load(self.model.MainPage_PlayerButton_path), pos=(640, 360), 
+            self.model.MainPage_PlayerButton = Button(image=pygame.image.load(self.model.PlayerButton_path), pos=(640, 360), 
                                 text_input="PLAY", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-            self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.MainPage_OptionButton_path), pos=(640, 490), 
+            self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.OptionButton_path), pos=(640, 490), 
                                 text_input="OPTIONS", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-            self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.MainPage_QuitButton_path), pos=(640, 620), 
+            self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-            # Display background music
+
             pygame.mixer.music.load(self.model.MainPage_BGM_path)
 
+        # Standardize Page Init
         if self.model.currentstate == 2:
-            # Display background music
-            # pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
+
+
+            pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
+
+        # Game Page Init
+        if self.model.currentstate == 3:
+            
+
             self.model.random_music()
             pygame.mixer.music.load(self.model.GamePage_BGM_path)
 
+        # Game Over Page Init
+        if self.model.currentstate == 4:
+            # Display the background
+            self.model.EndPage_BG = pygame.transform.scale(pygame.image.load(self.model.EndPage_BG_path), (1280, 720))
+            self.model.screen.blit(self.model.EndPage_BG, (0, 0))
 
-        if self.model.currentstate == 3:
-            # Display background music
-            pygame.mixer.music.load(self.model.GamePage_BGM_path)
-        
+            self.display_Title("Game Over", 100, "#F26448", 640, 180)
+            self.display_Text("Score: 1000", 50, "#FFFFFF", 640, 280)
+            self.display_Text("Your Wrist Is Very Healthy!", 50, "#FEB009", 640, 365)
+
+            self.model.EndPage_PlayerButton = Button(image=pygame.image.load(self.model.PlayerButton_path), pos=(640, 490), 
+                                text_input="PLAY AGAIN", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            
+            self.model.EndPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
+                                text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            
+
+            pygame.mixer.music.load(self.model.MainPage_BGM_path)
+            
         pygame.mixer.music.play(-1)
 
+    """
+    This function will be called 60 times per second
+    """
     def render(self):
         try:
-            if self.model.currentstate == 1:
-                # Get the mouse position
-                self.model.Menu_Mouse_Pos = pygame.mouse.get_pos()
+            # For Main Page & Game Over Page, get the mouse position and check for input
+            if self.model.currentstate == 1 or self.model.currentstate == 4:
+                self.model.Mouse_Pos = pygame.mouse.get_pos()
 
-                # If the mouse is hovering over the button, change the color
-                for button in [self.model.MainPage_PlayerButton, self.model.MainPage_OptionButton, self.model.MainPage_QuitButton]:
-                    button.changeColor(self.model.Menu_Mouse_Pos)
-                    button.update(self.model.screen)                
+                if self.model.currentstate == 1:
+                    for button in [self.model.MainPage_PlayerButton, self.model.MainPage_OptionButton, self.model.MainPage_QuitButton]:
+                        button.changeColor(self.model.Mouse_Pos)
+                        button.update(self.model.screen)  
 
-            if self.model.currentstate == 2 or self.model.currentstate == 3:
-            # standardize page
-                # # Display the background
-                # self.model.Standardize_BG = pygame.transform.scale(pygame.image.load(self.model.Standardize_BG_path), (1280, 720))
+                if self.model.currentstate == 4:
+                    for button in [self.model.EndPage_PlayerButton, self.model.EndPage_QuitButton]:
+                        button.changeColor(self.model.Mouse_Pos)
+                        button.update(self.model.screen)              
 
-                # Display FPS
+            # For Standardize Page & Game Page, get the camera image and display it
+            if self.model.currentstate == 2 or self.model.currentstate == 3:               
                 self.model.FPS_class.display_FPS(self.model.img)
 
                 """
                 Draw things on pygame
                 """
-                # Convert into RGB
                 self.model.img = cv2.cvtColor(self.model.img, cv2.COLOR_BGR2RGB)
-
-                # Convert the image into a format pygame can display
                 self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
 
+                # Standardize Page
                 if self.model.currentstate == 2:
-                    # blit the image onto the screen
+                    # Display the background
+                    # self.model.Standardize_BG = pygame.transform.scale(pygame.image.load(self.model.Standardize_BG_path), (1280, 720))
                     self.model.screen.blit(self.model.img, (320, 0))
-                    
                     pygame.time.delay(int(1000 / 120))
-                    # Expand Mediapipe Pose landmarks
                     self.model.Mediapipe_pose_class.expand_landmark()
                     
+                # Game Page
                 elif self.model.currentstate == 3:
-                    # blit the image onto the screen
                     self.model.screen.blit(self.model.img, (0, 0))
-              
-                    # Expand Mediapipe Pose landmarks
                     self.model.Mediapipe_pose_class.expand_landmark()
-
                     text_color = (0, 0, 0)
+
                     # display the count down
                     time_elapsed = time.time() - self.model.prev_time
                     time_left  = 3 - time_elapsed
@@ -181,9 +211,6 @@ class UI_View(object):
         except Exception as e:
             print(e)        
        
-        # Update the screen
         pygame.display.flip()
-
-        # limit the redraw speed to 30 frames per second
         
         self.clock.tick(60)
