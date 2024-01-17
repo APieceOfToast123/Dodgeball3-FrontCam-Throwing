@@ -9,9 +9,9 @@ class mediapipe_pose_engine():
     def __init__(self):
         self.AI_model = mediapipe.solutions.pose
         self.AI_model_initialized = self.AI_model.Pose(
-                                    model_complexity = 1,
-                                    min_detection_confidence = 0.8, 
-                                    min_tracking_confidence = 0.8,
+                                    model_complexity = 2,
+                                    min_detection_confidence = 0.6, 
+                                    min_tracking_confidence = 0.6,
                                     enable_segmentation = False,
                                     smooth_segmentation = False
                                     )
@@ -22,7 +22,7 @@ class mediapipe_pose_engine():
         self.prev_angle= 0
         self.max_level = 0
         self.direction = "right"
-        
+        self.accumulate = True
 
     def process_image(self, img):
         try:
@@ -57,9 +57,12 @@ class mediapipe_pose_engine():
         visibility = self.World_Landmark.landmark[0].visibility
         """
     def expand_landmark(self):
-       
+        
         self.Left_Shoulder_x, self.Left_Shoulder_y ,self.Left_Shoulder_z = self.Pixel_Landmark[11].x, self.Pixel_Landmark[11].y, self.Pixel_Landmark[11].z
         self.Right_Shoulder_x, self.Right_Shoulder_y ,self.Right_Shoulder_z = self.Pixel_Landmark[12].x, self.Pixel_Landmark[12].y, self.Pixel_Landmark[12].z
+        self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
+        self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
+        self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
 
     def finger_pos(self):
         rect = (self.Right_Wrist_x, self.Right_Wrist_y, self.Right_Wrist_x, self.Right_Wrist_y)
@@ -72,22 +75,19 @@ class mediapipe_pose_engine():
 
        
     def draw_shoulder_line(self, img):
+        
+        cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)    
+        cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
-        self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
-        self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
-        self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
-        cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)
-
+    def handle_twist(self):
         
         if self.direction == "right":
             self.right_ball()
            
         else:
             self.left_ball()
-           
-        cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-
-
+            
+            
     def right_ball(self):
         
         x_diff = np.abs(self.Right_Shoulder_x - self.median_x_coor)
@@ -96,7 +96,7 @@ class mediapipe_pose_engine():
         self.right_twist = (self.Right_Shoulder_z - self.median_z_coor)>0
         
         self.shoulder_angle =  np.degrees(np.arctan2(z_diff,x_diff))
-        self.accumulate = (self.shoulder_angle - self.prev_angle) >= 2
+        self.accumulate = (self.shoulder_angle - self.prev_angle) >= 0.06
         
         if self.right_twist:
             # 5，20，40，60
@@ -121,8 +121,11 @@ class mediapipe_pose_engine():
                     # self.max_level = 0
                     # cv2.putText(self.model.img, self.hint, (int(self.median_x_coor * self.model.img.shape[1]), int(self.median_y_coor * self.model.img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
         else:
+            
+            self.hint = "twsit  wrong dirction"
             self.max_level = 0
         
+        print(self.max_level)
         
 
         # self.angles.append(np.degrees(self.shoulder_angle))
@@ -144,7 +147,7 @@ class mediapipe_pose_engine():
         
         if self.left_twist:
             # 5，20，40，60
-                # print(self.accumulate)
+                
                 if 12< self.shoulder_angle < 28:
                     self.hint = "Level One"
                     if self.accumulate:
@@ -162,11 +165,11 @@ class mediapipe_pose_engine():
                     
                 elif self.shoulder_angle < 8:
                     self.hint = "No twisting"
-                    self.max_level = 0
+                    # self.max_level = 0
          
-        elif self.shoulder_angle < 10:
-            self.max_level = 0
-            # self.model.evManager.Post(ThrowEvent())
+        else:
+          self.hint = "twist wrong direction "
+          self.max_level = 0
         
         self.prev_angle = self.shoulder_angle
 

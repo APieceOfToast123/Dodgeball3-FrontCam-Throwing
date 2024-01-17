@@ -71,23 +71,24 @@ class UI_View(object):
             # Display Mediapipe Pose landmarks
             if self.model.currentstate == 3:
                 
+            
                 
-
+                
+            # 显示图像
+                
+                # print(self.model.Mediapipe_pose_class.direction)
+                # print("aaa")
+                self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
+                
+                # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
+                
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 1
                 font_thickness = 2
-                font_color = (255, 255, 255)  # 白色
-
-               
-                
+                font_color = (255, 255, 255)  # 白色       
                 box_color = (0, 0, 255)  # 红色
-
-                image_height, image_width, _ = self.model.img.shape
-                
-               
+                image_height, image_width, _ = self.model.img.shape     
                 self.model.time_left  = 3 - self.model.elapsed_time
-
-
             # display the count down
              # 设置方框的位置和大小
                 box_position = (400, 50)
@@ -96,14 +97,7 @@ class UI_View(object):
                 text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 2)
                 cv2.putText(self.model.img, "{:.0f}".format(self.model.time_left), text_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
 
-            # display the twist direction
-                text2 = "please twist {}".format(self.model.Mediapipe_pose_class.direction)
-                box_size = (500,100 )
-                box_position = (900, 50)
-                text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
-                cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
-                cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
-                
+            
             # display the score
                 text3 = "Score:{}  ".format(self.model.total_score)
                 text3 = text3+("Missed" if self.model.hit_goal == False else "Hit")
@@ -113,28 +107,26 @@ class UI_View(object):
                 cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
                 cv2.putText(self.model.img, text3, text3_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
                 
+            # display the twist direction
+                text2 = "please twist {}".format(self.model.Mediapipe_pose_class.direction)
+                box_size = (500,100 )
+                box_position = (900, 50)
+                text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
+                cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
+            
+            
                 
                 
-            # 显示图像
-                self.model.Mediapipe_pose_class.expand_landmark()
-                # print(self.model.Mediapipe_pose_class.direction)
-                # print("aaa")
-                self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
-                # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
-               
-            # # Display Mediapipe Hand landmarks
-            # if self.model.currentstate == 3:
-            #     # self.model.Mediapipe_hand_class.draw_all_landmark_circle(self.model.img)
-            #     self.model.Mediapipe_hand_class.draw_all_landmark_drawing_utils(self.model.img)
-
-            # # Display Mediapipe FaceMesh landmarks
-            # if self.model.currentstate == 4:
-            #     self.model.Mediapipe_FaceMesh_class.draw_all_landmark_drawing_utils(self.model.img)
-
-            # # Display Mediapipe Holistic landmarks 
-            # if self.model.currentstate == 5:
-            #     self.model.Mediapipe_Holistic_class.draw_all_landmark_drawing_utils(self.model.img)
+            if self.model.currentstate == 3:
+                # 报告游戏结果
+                pass
+                
+                
+                
+                
+                
         except Exception as e:
             print(e)
         # Display Segmentation
@@ -184,15 +176,14 @@ class UI_View(object):
         # progress bar
         white = (255, 255, 255)
         green = (0, 255, 0)
-        pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
-        if self.model.Mediapipe_pose_class.max_level == 1:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 100, 50)) 
-        elif self.model.Mediapipe_pose_class.max_level == 2:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
-        elif self.model.Mediapipe_pose_class.max_level == 3:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
-
-
+        
+        
+        # pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
+        level = self.model.Mediapipe_pose_class.max_level
+        
+        pygame.draw.rect(self.model.screen, green, (50, 50, 100*level, 50))
+        
+        
    
         # Update the screen
         pygame.display.flip()

@@ -118,38 +118,50 @@ class control(object):
                     # Mediapipe Pose
                     if self.model.currentstate == 3:
                         self.model.Mediapipe_pose_class.process_image(self.model.img)
+                        self.model.Mediapipe_pose_class.expand_landmark()
+                        self.model.Mediapipe_pose_class.handle_twist()
                         # self.model.Mediapipe_pose_class.expand_landmark()
                 except Exception as e:
                     print(e)
                     import traceback
                     traceback.print_exc()
 
+                
+                
+                # 判断是否到了3s
+                
                 self.model.elapsed_time = time.time() - self.model.prev_time
-
-                if 0 <self.model.elapsed_time -3 < 1:
+                if 0 <self.model.elapsed_time -60 < 1:
+                    print(self.model.Mediapipe_pose_class.max_level)
                     if self.model.Mediapipe_pose_class != None:
                     #   time.sleep(1)
                     
                       if self.model.Mediapipe_pose_class.max_level == 1:
-                        if (random.uniform(0, 1) > 0.2):
+                        # if (random.uniform(0, 1) > 0.2):
                             self.model.hit_goal = True 
                             self.model.total_score += 50
-                        else:
-                            self.model.hit_goal = False
+                        # else:
+                            # self.model.hit_goal = False
                       elif self.model.Mediapipe_pose_class.max_level == 2:
-                        if (random.uniform(0, 1) > 0.1):
+                        # if (random.uniform(0, 1) > 0.1):
                             self.model.hit_goal = True  
                             self.model.total_score += 50
-                        else: 
-                            self.model.hit_goal = False
+                        # else: 
+                            # self.model.hit_goal = False
                       elif self.model.Mediapipe_pose_class.max_level == 3:
                         self.model.hit_goal = True 
                         self.model.total_score += 50
-                    
-                      self.model.Mediapipe_pose_class.generate_random_direction()
+                        print("打中了加分")
+                        
+                        
+                    #换一个新的方向
+                    #   self.direction =  self.model.Mediapipe_pose_class.generate_random_direction()
+                      
                       self.model.prev_time = time.time()
-                      print(time.time() - self.model.prev_time)
-                      print("change the direction")
+                      
+                    
+                    #   print(time.time() - self.model.prev_time)
+                    #   print("change the direction")
                 
                     
                 #判断60s是否结束
@@ -163,6 +175,9 @@ class control(object):
                 """
               
                 self.graphics.render()
+                
+                # 归零
+                self.model.Mediapipe_pose_class.max_level = 0
 
             self.input_event()
             
