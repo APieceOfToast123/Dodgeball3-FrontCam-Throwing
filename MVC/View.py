@@ -4,8 +4,9 @@ import pygame
 from pygame.locals import *
 import pygame.freetype
 import cv2
-from Components.Button.Button import button
+from Components.Button.Button import Button
 from Components.Sprite_Engine.Sprite import sprite_engine
+import sys
 # from Components.Mediapipe_Models.Mediapipe_Engine import mediapipe_pose_engine
 # import numpy as np
 import time
@@ -22,7 +23,7 @@ class UI_View(object):
         pygame.font.init()
         pygame.freetype.init()
 
-        pygame.display.set_caption('Test_Project')
+        pygame.display.set_caption('Throw Dodgeball')
 
         # flags = FULLSCREEN | DOUBLEBUF
         flags = DOUBLEBUF
@@ -45,30 +46,48 @@ class UI_View(object):
         pygame.quit()
 
     def init_page(self):
-        self.model.add_button = button((100, 150), self.model.add_button_path, self.model, 2)
-        self.model.minus_button = button((100, 250), self.model.minus_button_path, self.model, 2)
-        
-        self.model.bun_sprite = sprite_engine(self.model.bun_sprite_path, (100, 400), 6, self.model)
+        if self.model.currentstate == 1:
+            # Display the background
+            self.model.MainPage_BG = pygame.transform.scale(pygame.image.load(self.model.MainPage_BG_path), (1280, 720))
+            self.model.screen.blit(self.model.MainPage_BG, (0, 0))
+
+            # Display the title
+            self.model.Menu_Text = self.model.get_title_font(120).render("throw dodgeball", True, "#F26448")
+            # Align the text
+            self.model.Menu_Rect = self.model.Menu_Text.get_rect(center=(640, 180))
+            # Display the text on the screen
+            self.model.screen.blit(self.model.Menu_Text, self.model.Menu_Rect)
+
+            self.model.MainPage_PlayerButton = Button(image=pygame.image.load(self.model.MainPage_PlayerButton_path), pos=(640, 360), 
+                                text_input="PLAY", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            
+            self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.MainPage_OptionButton_path), pos=(640, 490), 
+                                text_input="OPTIONS", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            
+            self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.MainPage_QuitButton_path), pos=(640, 620), 
+                                text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+
 
     def render(self):
-        # Display FPS
-        self.model.FPS_class.display_FPS(self.model.img)
         try:
-            
             if self.model.currentstate == 1:
-            # display the first page
-                pass
+                # Get the mouse position
+                self.model.Menu_Mouse_Pos = pygame.mouse.get_pos()
 
+                # If the mouse is hovering over the button, change the color
+                for button in [self.model.MainPage_PlayerButton, self.model.MainPage_OptionButton, self.model.MainPage_QuitButton]:
+                    button.changeColor(self.model.Menu_Mouse_Pos)
+                    button.update(self.model.screen)                
 
             if self.model.currentstate == 2:
             # standardize page
                 pass
 
-
-
             # Display Mediapipe Pose landmarks
             if self.model.currentstate == 3:
-                
+                # Display FPS
+                self.model.FPS_class.display_FPS(self.model.img)
+                self.model.Mediapipe_pose_class.expand_landmark()
 
                 box_color = (200, 200, 200)
                 text_color = (0, 0, 0)
@@ -94,80 +113,41 @@ class UI_View(object):
                 self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
-               
-            # # Display Mediapipe Hand landmarks
-            # if self.model.currentstate == 3:
-            #     # self.model.Mediapipe_hand_class.draw_all_landmark_circle(self.model.img)
-            #     self.model.Mediapipe_hand_class.draw_all_landmark_drawing_utils(self.model.img)
 
-            # # Display Mediapipe FaceMesh landmarks
-            # if self.model.currentstate == 4:
-            #     self.model.Mediapipe_FaceMesh_class.draw_all_landmark_drawing_utils(self.model.img)
+                """
+                Draw things on pygame
+                """
+                empty_color = pygame.Color(0, 0, 0, 0)
+                self.model.screen.fill(empty_color)
 
-            # # Display Mediapipe Holistic landmarks 
-            # if self.model.currentstate == 5:
-            #     self.model.Mediapipe_Holistic_class.draw_all_landmark_drawing_utils(self.model.img)
+                # Convert into RGB
+                self.model.img = cv2.cvtColor(self.model.img, cv2.COLOR_BGR2RGB)
+
+                # Convert the image into a format pygame can display
+                self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
+
+                # blit the image onto the screen
+                self.model.screen.blit(self.model.img, (-320, 0))
+
+                '''
+                Move this part to progress_bar component later
+                '''
+
+                
+                # progress bar
+                white = (255, 255, 255)
+                green = (0, 255, 0)
+                pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
+                if self.model.Mediapipe_pose_class.max_level == 1:
+                    pygame.draw.rect(self.model.screen, green, (50, 50, 100, 50)) 
+                elif self.model.Mediapipe_pose_class.max_level == 2:
+                    pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
+                elif self.model.Mediapipe_pose_class.max_level == 3:
+                    pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
+
         except Exception as e:
-            print(e)
-        # Display Segmentation
-        # self.model.img = self.model.segmentation_class.calculate_segmentation(self.model.img, Mediapipe_Holistic_class.get_segmentation_mask())
-
-        # self.model.CV2_class.display_camera(self.model.img) # show image
-
-        # if self.model.CV2_class.check_exit():
-        #     self.model.CV2_class.release_camera() # release camera
-        #     self.evManager.Post(QuitEvent())
-
-        # if self.model.state == 1:
-        #     render_Page1()
-            
+            print(e)        
        
-            
-        """
-        Draw things on pygame
-        """
-        empty_color = pygame.Color(0, 0, 0, 0)
-        self.model.screen.fill(empty_color)
-
-        # Convert into RGB
-        self.model.img = cv2.cvtColor(self.model.img, cv2.COLOR_BGR2RGB)
-
-        # Convert the image into a format pygame can display
-        self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
-
-        # blit the image onto the screen
-        self.model.screen.blit(self.model.img, (0, 0))
-        
-        # Draw button
-        self.model.add_button.draw(self.model.screen)
-        self.model.minus_button.draw(self.model.screen)
-
-        # Draw sprite
-        self.model.bun_sprite.draw(self.model.bun_sprite_time)
-       
-     
-
-
-        '''
-        Move this part to progress_bar component later
-        '''
-
-        
-        # progress bar
-        white = (255, 255, 255)
-        green = (0, 255, 0)
-        pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
-        if self.model.Mediapipe_pose_class.max_level == 1:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 100, 50)) 
-        elif self.model.Mediapipe_pose_class.max_level == 2:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 200, 50)) 
-        elif self.model.Mediapipe_pose_class.max_level == 3:
-            pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
-
-
-        # Display the countdown
-        self.model.screen.blit(text, text_rect)
-        self.model.screen.blit(text2, text_rect2)
         # Update the screen
         pygame.display.flip()
 
