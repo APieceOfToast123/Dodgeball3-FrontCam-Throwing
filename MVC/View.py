@@ -9,6 +9,8 @@ from Components.Sprite_Engine.Sprite import sprite_engine
 # from Components.Mediapipe_Models.Mediapipe_Engine import mediapipe_pose_engine
 # import numpy as np
 import time
+
+
 class UI_View(object):
     def __init__(self, evManager, model):
         self.evManager = evManager
@@ -69,25 +71,43 @@ class UI_View(object):
             # Display Mediapipe Pose landmarks
             if self.model.currentstate == 3:
                 
+                
 
-                box_color = (200, 200, 200)
-                text_color = (0, 0, 0)
-                # display the count down
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 1
+                font_thickness = 2
+                font_color = (255, 255, 255)  # 白色
+
+                # 设置方框的位置和大小
+                box_position = (300, 50)
+                box_size = (100, 100)
+                box_color = (0, 0, 255)  # 红色
+
+                image_height, image_width, _ = self.model.img.shape
+                
                 time_elapsed = time.time() - self.model.prev_time
                 time_left  = 3 - time_elapsed
-                font = pygame.font.Font(None, 36)
-                text_color = (0,255 , 0)
-                text = font.render(str(time_left), True, text_color)
-                text_rect = text.get_rect(center=(self.windowsize[0] // 2, self.windowsize[1] // 2))
-                self.model.screen.blit(text, text_rect)
-
-              
 
 
-                # display the twist direction       
-                text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
-                text_rect2 = text.get_rect(center=(self.windowsize[0] // 3, self.windowsize[1] // 3))
+            # display the count down
                 
+                cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
+                text_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                cv2.putText(self.model.img, "{:.0f}".format(time_left), text_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
+                # display the twist direction       
+                # text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
+
+
+
+            # display the twist direction
+                text2 = "please twist {}".format(self.model.Mediapipe_pose_class.direction)
+                box_position = (900, 50)
+                text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
+                cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
+                
+
+                # 显示图像
                 self.model.Mediapipe_pose_class.expand_landmark()
                 # print(self.model.Mediapipe_pose_class.direction)
                 # print("aaa")
@@ -165,9 +185,7 @@ class UI_View(object):
             pygame.draw.rect(self.model.screen, green, (50, 50, 300, 50))
 
 
-        # Display the countdown
-        self.model.screen.blit(text, text_rect)
-        self.model.screen.blit(text2, text_rect2)
+   
         # Update the screen
         pygame.display.flip()
 

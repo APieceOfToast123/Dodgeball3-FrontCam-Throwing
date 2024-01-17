@@ -124,8 +124,9 @@ class control(object):
                     import traceback
                     traceback.print_exc()
 
-                print(time.time() - self.model.prev_time)
-                if 0 <(time.time() - self.model.prev_time -3) < 1:
+                self.model.left_time = time.time() - self.model.prev_time
+                
+                if 0 <self.model.left_time < 1:
                     if self.model.Mediapipe_pose_class != None:
                      self.model.Mediapipe_pose_class.generate_random_direction()
                      self.model.prev_time = time.time()
@@ -134,8 +135,9 @@ class control(object):
                     else:
                         print("didn't change direction")
                     
-                # 不能使用等于号
-                if time.time() - self.model.start_time == 60:
+                #判断60s是否结束
+                self.model.total_left_time = time.time() - self.model.start_time
+                if 0 <self.model.total_left_time - 60 < 1:
                     self.evManager.Post(PauseEvent())
 
                 """
