@@ -23,7 +23,7 @@ class UI_View(object):
         pygame.font.init()
         pygame.freetype.init()
 
-        pygame.display.set_caption('Test_Project')
+        pygame.display.set_caption('Throw Dodgeball')
 
         # flags = FULLSCREEN | DOUBLEBUF
         flags = DOUBLEBUF
@@ -32,8 +32,8 @@ class UI_View(object):
             screen_no = 1
         else:
             screen_no = 0
-
-        self.model.screen = pygame.display.set_mode((1280, 720), flags, 16, display = screen_no, vsync=1)
+        self.windowsize =(1280, 720)
+        self.model.screen = pygame.display.set_mode(self.windowsize, flags, 16, display = screen_no, vsync=1)
 
         self.clock = pygame.time.Clock()
 
@@ -48,24 +48,24 @@ class UI_View(object):
     def init_page(self):
         if self.model.currentstate == 1:
             # Display the background
-            self.model.MainPage_BG = pygame.image.load(self.model.MainPage_BG_path)
+            self.model.MainPage_BG = pygame.transform.scale(pygame.image.load(self.model.MainPage_BG_path), (1280, 720))
             self.model.screen.blit(self.model.MainPage_BG, (0, 0))
 
             # Display the title
-            self.model.Menu_Text = self.model.get_font(100).render("Throw Dodgeball", True, "#b68f40")
+            self.model.Menu_Text = self.model.get_title_font(120).render("throw dodgeball", True, "#F26448")
             # Align the text
-            self.model.Menu_Rect = self.model.Menu_Text.get_rect(center=(640, 100))
+            self.model.Menu_Rect = self.model.Menu_Text.get_rect(center=(640, 180))
             # Display the text on the screen
             self.model.screen.blit(self.model.Menu_Text, self.model.Menu_Rect)
 
-            self.model.MainPage_PlayerButton = Button(image=pygame.image.load(self.model.MainPage_PlayerButton_path), pos=(640, 300), 
-                                text_input="PLAY", font=self.model.get_font(60), base_color="#d7fcd4", hovering_color="White")
+            self.model.MainPage_PlayerButton = Button(image=pygame.image.load(self.model.MainPage_PlayerButton_path), pos=(640, 360), 
+                                text_input="PLAY", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-            self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.MainPage_OptionButton_path), pos=(640, 450), 
-                                text_input="OPTIONS", font=self.model.get_font(60), base_color="#d7fcd4", hovering_color="White")
+            self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.MainPage_OptionButton_path), pos=(640, 490), 
+                                text_input="OPTIONS", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-            self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.MainPage_QuitButton_path), pos=(640, 600), 
-                                text_input="QUIT", font=self.model.get_font(60), base_color="#d7fcd4", hovering_color="White")
+            self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.MainPage_QuitButton_path), pos=(640, 620), 
+                                text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
 
 
     def render(self):
@@ -77,14 +77,39 @@ class UI_View(object):
                 # If the mouse is hovering over the button, change the color
                 for button in [self.model.MainPage_PlayerButton, self.model.MainPage_OptionButton, self.model.MainPage_QuitButton]:
                     button.changeColor(self.model.Menu_Mouse_Pos)
-                    button.update(self.model.screen)
+                    button.update(self.model.screen)                
+
+            if self.model.currentstate == 2:
+            # standardize page
+                pass
 
             # Display Mediapipe Pose landmarks
-            elif self.model.currentstate == 2:
+            if self.model.currentstate == 3:
                 # Display FPS
                 self.model.FPS_class.display_FPS(self.model.img)
                 self.model.Mediapipe_pose_class.expand_landmark()
+
+                box_color = (200, 200, 200)
+                text_color = (0, 0, 0)
+                # display the count down
+                time_elapsed = time.time() - self.model.prev_time
+                time_left  = 3 - time_elapsed
+                font = pygame.font.Font(None, 36)
+                text_color = (0,255 , 0)
+                text = font.render(str(time_left), True, text_color)
+                text_rect = text.get_rect(center=(self.windowsize[0] // 2, self.windowsize[1] // 2))
+                self.model.screen.blit(text, text_rect)
+
+              
+
+
+                # display the twist direction       
+                text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
+                text_rect2 = text.get_rect(center=(self.windowsize[0] // 3, self.windowsize[1] // 3))
                 
+                self.model.Mediapipe_pose_class.expand_landmark()
+                # print(self.model.Mediapipe_pose_class.direction)
+                # print("aaa")
                 self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
                 
                 # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
