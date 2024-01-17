@@ -2,6 +2,7 @@ from MVC.EventManager import *
 import time
 import pygame
 from Components.Button.Button import Button
+import random
 
 # State machine constants for the StateMachine class below
 STATE_MAINPAGE = 1
@@ -19,6 +20,8 @@ class GameEngine(object):
 
         self.first_state = STATE_MAINPAGE
 
+        self.random_number = None
+
         self.load_settings_and_data()
         
     def load_settings_and_data(self):
@@ -35,7 +38,7 @@ class GameEngine(object):
 
         self.MainPage_BGM_path = "Resources/Musics/Title_Music.wav"
         self.StandarizedPage_BGM_path = "Resources/Musics/Standardized_Music.wav"
-        self.GamePage_BGM_path = "Resources/Musics/Game_Music.ogg"
+        self.GamePage_BGM_path = f"Resources/Musics/Game_Music1.ogg"
 
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size
@@ -45,6 +48,10 @@ class GameEngine(object):
     def get_title_font(self, size): # Returns Press-Start-2P in the desired size
         pygame.font.init()
         return pygame.font.Font("Resources/Fonts/title_font.ttf", size)
+    
+    def random_music(self):
+        self.random_number = random.randint(1, 13)
+        self.GamePage_BGM_path = f"Resources/Musics/Game_Music{self.random_number}.ogg"
 
     def notify(self, event):
         """

@@ -59,7 +59,8 @@ class UI_View(object):
         # self.model.screen.blit(flash, (0, 0))
 
     def init_page(self):
-        self.alpha = 0
+        # self.alpha = 0
+
         if self.model.currentstate == 1:
             # Display the background
             self.model.MainPage_BG = pygame.transform.scale(pygame.image.load(self.model.MainPage_BG_path), (1280, 720))
@@ -83,17 +84,19 @@ class UI_View(object):
             
             # Display background music
             pygame.mixer.music.load(self.model.MainPage_BGM_path)
-            pygame.mixer.music.play(-1)
 
         if self.model.currentstate == 2:
             # Display background music
-            pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
-            pygame.mixer.music.play(-1)
+            # pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
+            self.model.random_music()
+            pygame.mixer.music.load(self.model.GamePage_BGM_path)
+
 
         if self.model.currentstate == 3:
             # Display background music
             pygame.mixer.music.load(self.model.GamePage_BGM_path)
-            pygame.mixer.music.play(-1)
+        
+        pygame.mixer.music.play(-1)
 
     def render(self):
         try:
@@ -127,13 +130,14 @@ class UI_View(object):
                     # blit the image onto the screen
                     self.model.screen.blit(self.model.img, (320, 0))
                     
+                    pygame.time.delay(int(1000 / 120))
                     # Expand Mediapipe Pose landmarks
                     self.model.Mediapipe_pose_class.expand_landmark()
                     
                 elif self.model.currentstate == 3:
                     # blit the image onto the screen
                     self.model.screen.blit(self.model.img, (0, 0))
-                    
+              
                     # Expand Mediapipe Pose landmarks
                     self.model.Mediapipe_pose_class.expand_landmark()
 
