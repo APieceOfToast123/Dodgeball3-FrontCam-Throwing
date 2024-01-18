@@ -185,7 +185,6 @@ class UI_View(object):
                     text2 = font.render("please twist {}".format(self.model.Mediapipe_pose_class.direction),True, text_color)
                     text_rect2 = text.get_rect(center=(self.windowsize[0] // 3, self.windowsize[1] // 3))
                     
-                    self.model.Mediapipe_pose_class.expand_landmark()
                     # print(self.model.Mediapipe_pose_class.direction)
                     # print("aaa")
                     self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)

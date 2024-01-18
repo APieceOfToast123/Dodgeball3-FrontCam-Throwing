@@ -103,6 +103,7 @@ class control(object):
                             
                         if time.time() - self.mdoel.start_time == 60:
                             self.evManager.Post(PauseEvent())
+                    
            
             
             """

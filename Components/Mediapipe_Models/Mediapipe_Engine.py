@@ -33,7 +33,7 @@ class mediapipe_pose_engine():
             self.Pose_World_Landmark = self.results.pose_world_landmarks.landmark
         else:
             self.pose_detected = False
-            cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+            # cv2.putText(img, "No pose detected", (10, 110), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
             
         """
         self.Pose_Landmark.landmark[0]
@@ -58,8 +58,8 @@ class mediapipe_pose_engine():
         """
     def expand_landmark(self):
        
-        self.Left_Shoulder_x, self.Left_Shoulder_y ,self.Left_Shoulder_z = self.Pixel_Landmark[11].x, self.Pixel_Landmark[11].y, self.Pixel_Landmark[11].z
-        self.Right_Shoulder_x, self.Right_Shoulder_y ,self.Right_Shoulder_z = self.Pixel_Landmark[12].x, self.Pixel_Landmark[12].y, self.Pixel_Landmark[12].z
+        self.Left_Shoulder_x, self.Left_Shoulder_y ,self.Left_Shoulder_z = self.Pose_Pixel_Landmark[11].x, self.Pose_Pixel_Landmark[11].y, self.Pose_Pixel_Landmark[11].z
+        self.Right_Shoulder_x, self.Right_Shoulder_y ,self.Right_Shoulder_z = self.Pose_Pixel_Landmark[12].x, self.Pose_Pixel_Landmark[12].y, self.Pose_Pixel_Landmark[12].z
 
     def finger_pos(self):
         rect = (self.Right_Wrist_x, self.Right_Wrist_y, self.Right_Wrist_x, self.Right_Wrist_y)
