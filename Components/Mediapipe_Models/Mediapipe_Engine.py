@@ -23,6 +23,7 @@ class mediapipe_pose_engine():
         self.max_level = 0
         self.direction = "right"
         self.accumulate = True
+        self.max_level_store = 0
 
     def process_image(self, img):
         try:
@@ -123,6 +124,9 @@ class mediapipe_pose_engine():
         else:
             
             self.hint = "twsit  wrong dirction"
+            if self.max_level != 0 :
+                self.went_back = True
+                self.max_level_store = self.max_level
             self.max_level = 0
         
         print(self.max_level)

@@ -114,32 +114,13 @@ class UI_View(object):
                 text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
                 cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
                 cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
-            
-            
-                
-                
                 
             if self.model.currentstate == 3:
                 # 报告游戏结果
                 pass
-                
-                
-                
-                
-                
+                      
         except Exception as e:
             print(e)
-        # Display Segmentation
-        # self.model.img = self.model.segmentation_class.calculate_segmentation(self.model.img, Mediapipe_Holistic_class.get_segmentation_mask())
-
-        # self.model.CV2_class.display_camera(self.model.img) # show image
-
-        # if self.model.CV2_class.check_exit():
-        #     self.model.CV2_class.release_camera() # release camera
-        #     self.evManager.Post(QuitEvent())
-
-        # if self.model.state == 1:
-        #     render_Page1()
             
        
             
@@ -176,14 +157,11 @@ class UI_View(object):
         # progress bar
         white = (255, 255, 255)
         green = (0, 255, 0)
-        
-        
-        # pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50)) 
         level = self.model.Mediapipe_pose_class.max_level
-        
         pygame.draw.rect(self.model.screen, green, (50, 50, 100*level, 50))
-        
-        
+        if 0 <self.model.elapsed_time -3 < 1:
+            self.model.Mediapipe_pose_class.max_level_store = 0
+      
    
         # Update the screen
         pygame.display.flip()

@@ -92,6 +92,9 @@ class control(object):
                 self.model.FPS_class = FPS_engine()
                 if self.model.currentstate == 3:
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
+                    self.start_time = time.time()
+                    self.prev_time =self.start_time 
+                    self.total_score = 0
                 # elif self.model.currentstate == 3:
                 #     self.model.Mediapipe_hand_class = mediapipe_hand_engine()
                 # elif self.model.currentstate == 4:
@@ -131,24 +134,24 @@ class control(object):
                 # 判断是否到了3s
                 
                 self.model.elapsed_time = time.time() - self.model.prev_time
-                if 0 <self.model.elapsed_time -60 < 1:
+                if 0 <self.model.elapsed_time -3 < 1:
                     print(self.model.Mediapipe_pose_class.max_level)
                     if self.model.Mediapipe_pose_class != None:
                     #   time.sleep(1)
                     
-                      if self.model.Mediapipe_pose_class.max_level == 1:
+                      if self.model.Mediapipe_pose_class.max_level_store == 1:
                         # if (random.uniform(0, 1) > 0.2):
                             self.model.hit_goal = True 
                             self.model.total_score += 50
                         # else:
                             # self.model.hit_goal = False
-                      elif self.model.Mediapipe_pose_class.max_level == 2:
+                      elif self.model.Mediapipe_pose_class.max_level_store == 2:
                         # if (random.uniform(0, 1) > 0.1):
                             self.model.hit_goal = True  
                             self.model.total_score += 50
                         # else: 
                             # self.model.hit_goal = False
-                      elif self.model.Mediapipe_pose_class.max_level == 3:
+                      elif self.model.Mediapipe_pose_class.max_level_store == 3:
                         self.model.hit_goal = True 
                         self.model.total_score += 50
                         print("打中了加分")
@@ -177,7 +180,7 @@ class control(object):
                 self.graphics.render()
                 
                 # 归零
-                self.model.Mediapipe_pose_class.max_level = 0
+                
 
             self.input_event()
             
