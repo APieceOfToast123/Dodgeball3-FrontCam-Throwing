@@ -158,7 +158,7 @@ class UI_View(object):
             if self.model.currentstate == 2 or self.model.currentstate == 3: 
                 self.model.screen.fill((255, 255, 255))
 
-                self.model.FPS_class.display_FPS(self.model.img)
+                # self.model.FPS_class.display_FPS(self.model.img)
 
                 self.model.img = cv2.cvtColor(self.model.img, cv2.COLOR_BGR2RGB)
                 self.model.img = pygame.image.frombuffer(self.model.img.tostring(), self.model.img.shape[1::-1], "RGB")
@@ -166,6 +166,20 @@ class UI_View(object):
                 # Standardize Page
                 if self.model.currentstate == 2:
                     self.model.screen.blit(self.model.img, (320, 0))
+
+                    # Create a font object
+                    # font = pygame.font.Font("C:/Users/admin/PycharmProjects/Dodgeball3-FrontCam-Throwing/Resources/Fonts/font.ttf", 32) # You can adjust the size and style
+                    # Render the text
+                    # text_surface = font.render("Stretch Your Arms!", True, (255, 255, 255))
+
+                    # # Blit the text surface onto the screen
+                    # text_rect = text_surface.get_rect()
+                    # text_rect.topleft = (530, 0)
+                    # self.model.screen.blit(text_surface, text_rect)
+
+                    self.display_Title("Standardize Your Pose", 50, "#FEB009", self.model.screen.get_width()//2, 50)
+
+                    self.model.Mediapipe_pose_class.expand_landmark()
 
                 # Game Page
                 if self.model.currentstate == 3:

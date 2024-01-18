@@ -36,10 +36,11 @@ class control(object):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.model.currentstate == 1:
                     if self.model.MainPage_PlayerButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 3
+                        self.model.currentstate = 2
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_OptionButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 4
+                        self.model.currentstate = 3
+                         
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                         self.graphics.quit_pygame()
@@ -82,9 +83,9 @@ class control(object):
                     self.model.Mediapipe_pose_class = mediapipe_pose_engine()
 
                     if self.model.currentstate == 3:
-                        self.start_time = time.time()
-                        self.prev_time =self.start_time 
-                        self.total_score = 0
+                        self.model.start_time = time.time()
+                        self.model.prev_time =self.model.start_time 
+                        self.model.total_score = 0
 
                 else:
                     pass       
@@ -114,6 +115,7 @@ class control(object):
 
                             # 判断是否到了3s
                             self.model.elapsed_time = time.time() - self.model.prev_time
+                            print(self.model.elapsed_time)
                             if 0 <self.model.elapsed_time -3 < 1:
                                 print(self.model.Mediapipe_pose_class.max_level)
                                 if self.model.Mediapipe_pose_class != None:

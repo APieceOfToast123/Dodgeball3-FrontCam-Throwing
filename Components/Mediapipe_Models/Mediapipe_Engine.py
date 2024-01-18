@@ -139,7 +139,7 @@ class mediapipe_pose_engine():
                 self.max_level_store = self.max_level
             self.max_level = 0
         
-        print(self.max_level)
+        # print(self.max_level)
         
 
         # self.angles.append(np.degrees(self.shoulder_angle))

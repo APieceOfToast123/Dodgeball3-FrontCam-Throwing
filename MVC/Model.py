@@ -24,7 +24,7 @@ class GameEngine(object):
 
         self.load_settings_and_data()
         # delete it later if finished the start_event
-        self.start_time = time.time()
+        self.start_time = None
         self.prev_time = self.start_time 
         self.total_score = 0
         self.hit_goal = False
