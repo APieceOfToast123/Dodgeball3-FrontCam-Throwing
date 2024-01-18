@@ -12,7 +12,7 @@ class CV2_engine():
         success, self.img = self.cap.read()
         # return success, self.img[:,0:int(self.img.shape[1]*3/4)]
         # return success, self.img
-        return success, self.img[:,int(self.img.shape[1]*1/4):int(self.img.shape[1]*3/4)]
+        return success, cv2.flip(self.img[:,int(self.img.shape[1]*1/4):int(self.img.shape[1]*3/4)], 1)
     
     def display_camera(self, img=None):
         if img is None:
