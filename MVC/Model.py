@@ -1,11 +1,16 @@
 from MVC.EventManager import *
 import time
+import pygame
+from Components.Button.Button import Button
+import random
+
 # State machine constants for the StateMachine class below
-STATE_CV = 1
-STATE_POSE = 2
-STATE_HAND = 3
-STATE_FACEMESH = 4
-STATE_HOLISTIC = 5
+STATE_MAINPAGE = 1
+STATE_STANDARDIZE = 2
+STATE_GAME = 3
+STATE_GAMEOVER = 4
+STATE_OPTION = 5
+STATE_PAUSE = 6
 
 class GameEngine(object):
     def __init__(self, evManager):
@@ -13,25 +18,44 @@ class GameEngine(object):
         evManager.RegisterListener(self)
         self.state = StateMachine_level_1()
 
-        self.first_state = 3
+        self.first_state = STATE_MAINPAGE
+
+        self.random_number = None
 
         self.load_settings_and_data()
         # delete it later if finished the start_event
         self.start_time = time.time()
-        self.prev_time =self.start_time 
+        self.prev_time = self.start_time 
         self.total_score = 0
         self.hit_goal = False
     def load_settings_and_data(self):
-        import pygame
         icon_path = "Resources/Images/icon.png"
         pygame_icon = pygame.image.load(icon_path)
         pygame.display.set_icon(pygame_icon)
 
-        self.add_button_path = "Resources/Images/Buttons_add.png"
-        self.minus_button_path = "Resources/Images/Buttons_minus.png"
-        self.bun_sprite_path = "Resources/Images/Bun/"
-        self.bun_sprite_time = 0.6
+        self.MainPage_BG_path = "Resources/Images/MainPage_BG.jpg"
+        self.EndPage_BG_path = "Resources/Images/EndPage_BG.png"
 
+        self.PlayerButton_path = "Resources/Images/Play Rect.png"
+        self.OptionButton_path = "Resources/Images/Options Rect.png"
+        self.QuitButton_path = "Resources/Images/Quit Rect.png"
+
+        self.MainPage_BGM_path = "Resources/Musics/Title_Music.wav"
+        self.StandarizedPage_BGM_path = "Resources/Musics/Standardized_Music.wav"
+        self.GamePage_BGM_path = f"Resources/Musics/Game_Music1.ogg"
+
+
+    def get_font(self, size): # Returns Press-Start-2P in the desired size
+        pygame.font.init()
+        return pygame.font.Font("Resources/Fonts/font.ttf", size)
+    
+    def get_title_font(self, size): # Returns Press-Start-2P in the desired size
+        pygame.font.init()
+        return pygame.font.Font("Resources/Fonts/title_font.ttf", size)
+    
+    def random_music(self):
+        self.random_number = random.randint(1, 13)
+        self.GamePage_BGM_path = f"Resources/Musics/Game_Music{self.random_number}.ogg"
 
     def notify(self, event):
         """
