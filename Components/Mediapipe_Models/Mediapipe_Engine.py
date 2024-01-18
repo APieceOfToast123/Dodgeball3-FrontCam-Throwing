@@ -9,7 +9,7 @@ class mediapipe_pose_engine():
     def __init__(self):
         self.AI_model = mediapipe.solutions.pose
         self.AI_model_initialized = self.AI_model.Pose(
-                                    model_complexity = 2,
+                                    model_complexity = 1,
                                     min_detection_confidence = 0.6, 
                                     min_tracking_confidence = 0.6,
                                     enable_segmentation = False,
@@ -76,10 +76,19 @@ class mediapipe_pose_engine():
             cv2.circle(img, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
 
        
-    def draw_shoulder_line(self, img):
+    # def draw_shoulder_line(self, img):
         
-        cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)    
-        cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+    #     cv2.line(img, (int(self.Left_Shoulder_x * img.shape[1]), int(self.Left_Shoulder_y * img.shape[0])), 
+                        # (int(self.Right_Shoulder_x * img.shape[1]), int(self.Right_Shoulder_y * img.shape[0])), (255, 0, 0), 3)    
+    #     cv2.putText(img, self.hint, (int(self.median_x_coor * img.shape[1]), int(self.median_y_coor * img.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+
+    def draw_shoulder_line(self, img, font):
+        pygame.draw.line(img, (255, 0, 0), (int(self.Left_Shoulder_x * img.get_width() * 0.5), int(self.Left_Shoulder_y * img.get_height())),
+                        (int(self.Right_Shoulder_x * img.get_width() * 0.5), int(self.Right_Shoulder_y * img.get_height())), 3)
+        
+        text_surface = font.render(self.hint, True, (255, 0, 0))
+        text_position = (int(self.median_x_coor * img.get_width() * 0.5), int(self.median_y_coor * img.get_height()))
+        img.blit(text_surface, text_position)
 
     def handle_twist(self):
         

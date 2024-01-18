@@ -45,13 +45,14 @@ class UI_View(object):
 
     def quit_pygame(self):
         # shut down the pygame graphics
-        self.isinitialized = False
+        self.isinitialized = False        
         self.model.Menu_Mouse_Pos = None
         pygame.quit()
         sys.exit()
 
     def state_change_pygame(self):
         pygame.mixer.music.stop()
+        self.model.Menu_Mouse_Pos = None
         self.model.screen.fill((255, 255, 255))
         # self.alpha += 10
         # current_color = (255, 255, 255, self.alpha)
@@ -154,7 +155,9 @@ class UI_View(object):
                         button.update(self.model.screen)              
 
             # For Standardize Page & Game Page, get the camera image and display it
-            if self.model.currentstate == 2 or self.model.currentstate == 3:               
+            if self.model.currentstate == 2 or self.model.currentstate == 3: 
+                self.model.screen.fill((255, 255, 255))
+
                 self.model.FPS_class.display_FPS(self.model.img)
 
                 self.model.img = cv2.cvtColor(self.model.img, cv2.COLOR_BGR2RGB)
@@ -163,54 +166,53 @@ class UI_View(object):
                 # Standardize Page
                 if self.model.currentstate == 2:
                     self.model.screen.blit(self.model.img, (320, 0))
-                    self.model.Mediapipe_pose_class.expand_landmark()
 
                 # Game Page
                 if self.model.currentstate == 3:
                     self.model.screen.blit(self.model.img, (0, 0))
-                    self.model.Mediapipe_pose_class.draw_shoulder_line (self.model.img)
-                    
-                    # self.model.Mediapipe_pose_class.draw_all_landmark_line(self.model.img)
-                    
-                    font = cv2.FONT_HERSHEY_SIMPLEX
-                    font_scale = 1
-                    font_thickness = 2
-                    font_color = (255, 255, 255)  # 白色       
-                    box_color = (0, 0, 255)  # 红色
-                    image_height, image_width, _ = self.model.img.shape     
-                    self.model.time_left  = 3 - self.model.elapsed_time
-                    # display the count down
-                    box_position = (400, 50)
-                    box_size = (100, 100)
-                    cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
-                    text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 2)
-                    cv2.putText(self.model.img, "{:.0f}".format(self.model.time_left), text_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
 
-                
-                    # display the score
-                    text3 = "Score:{}  ".format(self.model.total_score)
-                    text3 = text3+("Missed" if self.model.hit_goal == False else "Hit")
-                    box_size = (300,100)
-                    box_position = (900,400)
+                    font = pygame.font.Font("Resources/Fonts/font.ttf", 36)
+                    font_color = (255, 255, 255)  # White
+                    box_color = (0, 0, 255)  # Red
+                    self.model.time_left = 3 - self.model.elapsed_time
+
+                    self.model.Mediapipe_pose_class.draw_shoulder_line(self.model.screen, font)
+
+                    # Display the count down
+                    box_position = (200, 50)
+                    box_size = (100, 100)
+                    pygame.draw.rect(self.model.img, box_color, (*box_position, *box_size))
+                    text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 2)
+                    text_surface = font.render("{:.0f}".format(self.model.time_left), True, font_color)
+                    self.model.img.blit(text_surface, text_position)
+
+                    # Display the score
+                    text3 = "Score:{}  {}".format(self.model.total_score, "Missed" if not self.model.hit_goal else "Hit")
+                    box_size = (300, 100)
+                    box_position = (900, 400)
                     text3_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
-                    cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
-                    cv2.putText(self.model.img, text3, text3_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
-                    
-                    # display the twist direction hint
-                    text2 = "please twist {}".format(self.model.Mediapipe_pose_class.direction)
-                    box_size = (500,100 )
+                    pygame.draw.rect(self.model.img, box_color, (*box_position, *box_size))
+                    text3_surface = font.render(text3, True, font_color)
+                    self.model.img.blit(text3_surface, text3_position)
+
+                    # Display the twist direction hint
+                    text2 = "Please twist {}".format(self.model.Mediapipe_pose_class.direction)
+                    box_size = (500, 100)
                     box_position = (900, 50)
                     text2_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
-                    cv2.rectangle(self.model.img, box_position, (box_position[0] + box_size[0], box_position[1] + box_size[1]), box_color, -1)
-                    cv2.putText(self.model.img, text2, text2_position, font, font_scale, font_color, font_thickness, cv2.LINE_AA)
+                    pygame.draw.rect(self.model.img, box_color, (*box_position, *box_size))
+                    text2_surface = font.render(text2, True, font_color)
+                    self.model.img.blit(text2_surface, text2_position)
 
-                    # progress bar
+                    # Progress bar
                     white = (255, 255, 255)
                     green = (0, 255, 0)
                     level = self.model.Mediapipe_pose_class.max_level
-                    pygame.draw.rect(self.model.screen, green, (50, 50, 100*level, 50))
-                    if 0 <self.model.elapsed_time -3 < 1:
+                    pygame.draw.rect(self.model.screen, green, (50, 50, 100 * level, 50))
+
+                    if 0 < self.model.elapsed_time - 3 < 1:
                         self.model.Mediapipe_pose_class.max_level_store = 0
+
                       
         except Exception as e:
             print(e)
