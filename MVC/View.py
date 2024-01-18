@@ -178,18 +178,25 @@ class UI_View(object):
 
                     self.model.Mediapipe_pose_class.draw_shoulder_line(self.model.screen, font)
 
+                    # Progress bar
+                    white = (255, 255, 255)
+                    green = (0, 255, 0)
+                    level = self.model.Mediapipe_pose_class.max_level
+                    pygame.draw.rect(self.model.screen, white, (0, 0, 300, 50))
+                    pygame.draw.rect(self.model.screen, green, (0, 0, 100 * level, 50))
+
                     # Display the count down
                     box_size = (80, 80)
-                    box_position = (50, 110)
+                    box_position = (0, 60)
                     pygame.draw.rect(self.model.screen, box_color, (box_position, box_size))
                     text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
-                    text_surface = font.render("1", True, font_color)
+                    text_surface = font.render("{:.0f}".format(self.model.time_left), True, font_color)
                     self.model.screen.blit(text_surface, text_position)
 
                     # Display the score
                     text3 = "Score:{}  {}".format(self.model.total_score, "Missed" if not self.model.hit_goal else "Hit")
                     box_size = (250, 100)
-                    box_position = (self.model.img.get_width()-box_size[0], 200)
+                    box_position = (self.model.img.get_width()-box_size[0], box_size[1]+10)
                     text3_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
                     pygame.draw.rect(self.model.screen, box_color, (*box_position, *box_size))
                     text3_surface = font.render(text3, True, font_color)
@@ -198,18 +205,11 @@ class UI_View(object):
                     # Display the twist direction hint
                     text2 = "Please twist {}".format(self.model.Mediapipe_pose_class.direction)
                     box_size = (300, 100)
-                    box_position = (self.model.img.get_width()-box_size[0], 50)
+                    box_position = (self.model.img.get_width()-box_size[0], 0)
                     text4_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
                     pygame.draw.rect(self.model.screen, box_color, (*box_position, *box_size))
                     text2_surface = font.render(text2, True, font_color)
                     self.model.screen.blit(text2_surface, text4_position)
-
-                    # Progress bar
-                    white = (255, 255, 255)
-                    green = (0, 255, 0)
-                    level = self.model.Mediapipe_pose_class.max_level
-                    pygame.draw.rect(self.model.screen, white, (50, 50, 300, 50))
-                    pygame.draw.rect(self.model.screen, green, (50, 50, 100 * level, 50))
 
                     if 0 < self.model.elapsed_time - 3 < 1:
                         self.model.Mediapipe_pose_class.max_level_store = 0

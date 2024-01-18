@@ -104,7 +104,7 @@ class control(object):
                 if self.model.success:
                     try: 
                         # Calculate FPS
-                        self.model.FPS_class.calculate_FPS()
+                        # self.model.FPS_class.calculate_FPS()
                         self.model.Mediapipe_pose_class.process_image(self.model.img)
                         self.model.Mediapipe_pose_class.expand_landmark()
 

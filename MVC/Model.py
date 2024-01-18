@@ -54,7 +54,7 @@ class GameEngine(object):
         return pygame.font.Font("Resources/Fonts/title_font.ttf", size)
     
     def random_music(self):
-        self.random_number = random.randint(1, 13)
+        self.random_number = random.randint(1, 11)
         self.GamePage_BGM_path = f"Resources/Musics/Game_Music{self.random_number}.ogg"
 
     def notify(self, event):
