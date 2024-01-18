@@ -86,9 +86,8 @@ class control(object):
                 self.pageinitilized = True
 
             """
-            Handle all Business Logic
+            Handle all Game Logic
             """
-            
             # Get camera image from CV2
             self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
             
@@ -148,38 +147,9 @@ class control(object):
                     
                 #判断60s是否结束
                 self.model.total_left_time = time.time() - self.model.start_time
-                if 0 <self.model.total_left_time - 80 < 1:
+                if 0 <self.model.total_left_time - 60 < 1:
                 # 如果结束，发送结束事件，转移状态，将pauseEvent g改为 StateChangeEvent
-                    self.evManager.Post(PauseEvent())
-
-                """
-                Tell view to render after all Business Logic
-                """
-              
-                self.graphics.render()
-                
-                # 归零
-                
-                # Get camera image from CV2
-                self.model.success, self.model.img = self.model.CV2_class.read_camera() # read camera
-                
-                if self.model.success:
-                    # Calculate FPS
-                    self.model.FPS_class.calculate_FPS()
-
-
-                    # Mediapipe Pose
-                    self.model.Mediapipe_pose_class.process_image(self.model.img)
-                    # self.model.Mediapipe_pose_class.expand_landmark()
-                    if self.model.currentstate == 3:
-                        if time.time() - self.model.prev_time == 3:
-                            self.model.MediaPipe_pose_class.generate_direction()
-                            self.model.prev_time = time.time()
-                            
-                        if time.time() - self.mdoel.start_time == 60:
-                            self.evManager.Post(PauseEvent())
-                    
-           
+                    self.evManager.Post(PauseEvent())           
             
             """
             Tell view to render after all Business Logic
