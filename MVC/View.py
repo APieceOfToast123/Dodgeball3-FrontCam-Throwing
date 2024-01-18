@@ -171,7 +171,7 @@ class UI_View(object):
                 if self.model.currentstate == 3:
                     self.model.screen.blit(self.model.img, (0, 0))
 
-                    font = pygame.font.Font("Resources/Fonts/title_font.ttf", 36)
+                    font = pygame.font.Font("Resources/Fonts/title_font.ttf", 25)
                     font_color = (255, 255, 255)  # White
                     box_color = (255, 0, 0)  # Red
                     self.model.time_left = 3 - self.model.elapsed_time
@@ -182,26 +182,26 @@ class UI_View(object):
                     box_size = (80, 80)
                     box_position = (50, 110)
                     pygame.draw.rect(self.model.screen, box_color, (box_position, box_size))
-                    text_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                    text_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
                     text_surface = font.render("1", True, font_color)
                     self.model.screen.blit(text_surface, text_position)
 
                     # Display the score
                     text3 = "Score:{}  {}".format(self.model.total_score, "Missed" if not self.model.hit_goal else "Hit")
-                    box_size = (150, 100)
-                    box_position = (280, 400)
-                    text3_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                    box_size = (250, 100)
+                    box_position = (self.model.img.get_width()-box_size[0], 200)
+                    text3_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
                     pygame.draw.rect(self.model.screen, box_color, (*box_position, *box_size))
-                    text3_surface = font.render("text3", True, font_color)
+                    text3_surface = font.render(text3, True, font_color)
                     self.model.screen.blit(text3_surface, text3_position)
 
                     # Display the twist direction hint
                     text2 = "Please twist {}".format(self.model.Mediapipe_pose_class.direction)
-                    box_size = (250, 100)
-                    box_position = (280, 50)
-                    text4_position = (box_position[0] + 50, box_position[1] + box_size[1] // 2)
+                    box_size = (300, 100)
+                    box_position = (self.model.img.get_width()-box_size[0], 50)
+                    text4_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
                     pygame.draw.rect(self.model.screen, box_color, (*box_position, *box_size))
-                    text2_surface = font.render("text2", True, font_color)
+                    text2_surface = font.render(text2, True, font_color)
                     self.model.screen.blit(text2_surface, text4_position)
 
                     # Progress bar
@@ -213,35 +213,10 @@ class UI_View(object):
 
                     if 0 < self.model.elapsed_time - 3 < 1:
                         self.model.Mediapipe_pose_class.max_level_store = 0
-
                       
         except Exception as e:
             print(e)
-            
-       
-            
-        """
-        Draw things on pygame
-        """
- 
-
-
-        '''
-        Move this part to progress_bar component later
-        '''
-
-        
-
-   
-        
-           
-                    
-               
-                   
-                    
-               
-
-   
+    
         pygame.display.flip()
         
         self.clock.tick(60)
