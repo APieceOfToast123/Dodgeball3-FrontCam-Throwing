@@ -67,6 +67,7 @@ class GameEngine(object):
 
         self.GamePage_LeftVoice_path = "Resources/Musics/turn_left.mp3"
         self.GamePage_RightVoice_path = "Resources/Musics/turn_right.mp3"
+        self.GamePage_StretchVoice_path = "Resources/Musics/Stretch arm.mp3"
 
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size

@@ -104,7 +104,13 @@ class UI_View(object):
 
             self.model.start_counting = False
             self.model.start_counting_time = None
+            pygame.mixer.music.load(self.model.GamePage_StretchVoice_path)
+            pygame.mixer.music.play()
+            time.sleep(2)
+            pygame.mixer.music.stop()
             pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
+            pygame.mixer.music.play()
+
 
         # Game Page Init
         if self.model.currentstate == 3:
@@ -256,8 +262,8 @@ class UI_View(object):
                     # Display the count down
                     box_size = (80, 80)
                     box_position = (0, 150)
-                    text_position = (box_position[0] + 130, box_position[1] + box_size[1] // 3)
-                    text_surface = font.render("{:.0f}".format(self.model.time_left), True, font_color)
+                    text_position = (box_position[0] + 130, box_position[1] + box_size[1] // 3 + 20)
+                    text_surface = font.render("{:.0f}".format(self.model.time_left), True, "#FEB009")
                     self.model.screen.blit(text_surface, text_position)
                     
                     self.model.screen.blit(self.model.timer, (box_position[0] + 25, box_position[1] + box_size[1] // 3))
@@ -267,7 +273,7 @@ class UI_View(object):
                     text2 = "Please twist  " + direction + "!"
                     box_size = (350, 100)
                     box_position = (self.model.img.get_width()-box_size[0]-5, 150)
-                    text4_position = (box_position[0] - 50, box_position[1] + box_size[1] // 3)
+                    text4_position = (box_position[0] - 50, box_position[1] + box_size[1] // 3 + 20)
                     text2_surface = font.render(text2, True, font_color)
                     self.model.screen.blit(text2_surface, text4_position)
 
