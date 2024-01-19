@@ -34,7 +34,28 @@ class GameEngine(object):
         pygame.display.set_icon(pygame_icon)
 
         self.MainPage_BG_path = "Resources/Images/MainPage_BG.jpg"
+        self.StandarizedPage_BG_path = "Resources/Images/StandardizedPage_BG.jpg"
+        self.GamePage_BG_path = "Resources/Images/GamePage_BG.png"
         self.EndPage_BG_path = "Resources/Images/EndPage_BG.png"
+        self.Monster_path = "Resources/Images/wizard.png"
+        self.bun_sprite_path = "Resources/Images/Bun/wizard idle_"
+        self.bun_sprite_time = 1.3
+
+        self.processBar_path = "Resources/Images/ProcessBar/"
+        self.iconBorder_path = self.processBar_path + "icon_border.png"
+        self.centerBar_path = self.processBar_path + "center_bar.png"
+        self.rightBar_path = self.processBar_path + "rightEdge.png"
+        self.leftEnergy_path = self.processBar_path + "leftEnergy.png"
+        self.reapetEnergy_path = self.processBar_path + "reapetEnergy.png"
+        self.rightEnergy_path = self.processBar_path + "rightEnergy.png"
+        self.borderLength = 8
+        self.repeatLength = 9
+
+        self.timer_path = "Resources/Images/timer.png"
+        self.magic_path = "Resources/Images/magic.png"
+        self.xp_path = "Resources/Images/xp.png"
+
+        self.StandarizedPage_Outline_path = "Resources/Images/Outline.png"
 
         self.PlayerButton_path = "Resources/Images/Play Rect.png"
         self.OptionButton_path = "Resources/Images/Options Rect.png"
@@ -43,6 +64,9 @@ class GameEngine(object):
         self.MainPage_BGM_path = "Resources/Musics/Title_Music.wav"
         self.StandarizedPage_BGM_path = "Resources/Musics/Standardized_Music.wav"
         self.GamePage_BGM_path = f"Resources/Musics/Game_Music1.ogg"
+
+        self.GamePage_LeftVoice_path = "Resources/Musics/turn_left.mp3"
+        self.GamePage_RightVoice_path = "Resources/Musics/turn_right.mp3"
 
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size

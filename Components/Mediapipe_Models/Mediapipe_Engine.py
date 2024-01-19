@@ -62,9 +62,14 @@ class mediapipe_pose_engine():
         
         self.Left_Shoulder_x, self.Left_Shoulder_y ,self.Left_Shoulder_z = self.Pixel_Landmark[11].x, self.Pixel_Landmark[11].y, self.Pixel_Landmark[11].z
         self.Right_Shoulder_x, self.Right_Shoulder_y ,self.Right_Shoulder_z = self.Pixel_Landmark[12].x, self.Pixel_Landmark[12].y, self.Pixel_Landmark[12].z
+        self.Left_Shoulder = [self.Left_Shoulder_x, self.Left_Shoulder_y]
+        self.Right_Shoulder = [self.Right_Shoulder_x, self.Right_Shoulder_y]
+        self.Left_elbow  = [self.Pixel_Landmark[13].x, self.Pixel_Landmark[13].y]
+        self.Right_elbow = [self.Pixel_Landmark[14].x, self.Pixel_Landmark[14].y]
         self.median_x_coor = (self.Left_Shoulder_x + self.Right_Shoulder_x) / 2
         self.median_z_coor = (self.Left_Shoulder_z + self.Right_Shoulder_z) / 2
         self.median_y_coor = (self.Left_Shoulder_y + self.Right_Shoulder_y) / 2
+
 
     def finger_pos(self):
         rect = (self.Right_Wrist_x, self.Right_Wrist_y, self.Right_Wrist_x, self.Right_Wrist_y)
@@ -182,10 +187,11 @@ class mediapipe_pose_engine():
                     # self.max_level = 0
          
         else:
-          self.hint = "twist wrong direction "
-          self.max_level = 0
-        
-        self.prev_angle = self.shoulder_angle
+            self.hint = "twsit  wrong dirction"
+            if self.max_level != 0 :
+                self.went_back = True
+                self.max_level_store = self.max_level
+            self.max_level = 0
 
 
     def draw_all_landmark_drawing_utils(self, img):
@@ -201,7 +207,15 @@ class mediapipe_pose_engine():
 
     def generate_random_direction(self):
         random_float = random.uniform(0, 1)
-        if random_float < 0.5:
-            self.direction = "left"
-        else:
-            self.direction = "right"
+        try:
+            if random_float < 0.5:
+                self.direction = "left"
+                
+            else:
+                self.direction = "right"
+            return self.direction
+        except Exception as e:
+            print(e)
+            import traceback
+            traceback.print_exc()
+

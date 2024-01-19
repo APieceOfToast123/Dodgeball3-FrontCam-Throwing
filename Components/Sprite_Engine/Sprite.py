@@ -12,7 +12,7 @@ class sprite_engine():
         
         # loop all images in the folder
         for i in range(1, self.amount+1):
-            img = pygame.image.load(path + str(i) + ".png").convert_alpha()
+            img = pygame.transform.scale(pygame.image.load(path + str(i) + ".png").convert_alpha(), (350, 350))
             self.imgList.append(img)
 
         self.img = self.imgList[self.current_sprite]

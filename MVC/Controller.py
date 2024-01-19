@@ -48,14 +48,29 @@ class control(object):
                         
                 elif self.model.currentstate == 4:
                     if self.model.EndPage_PlayerButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 3
+                        self.model.currentstate = 2
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.EndPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                         self.graphics.quit_pygame()
                         self.evManager.Post(QuitEvent())
                 else:
                     pass
+    
+    def calculate_angle(self,a, b, c):
+        a = np.array(a)
+        b = np.array(b)
+        c = np.array(c)
 
+        radians = np.arctan2(c[1] - b[1], c[0] - b[0]) - np.arctan2(a[1] - b[1], a[0] - b[0])
+        angle = np.abs(radians * 180.0 / np.pi)
+
+        if angle > 180.0:
+            angle = 360 - angle
+
+        return angle
+    
+
+        
     def notify(self, event):
         """
         Receive events posted to the message queue. 
@@ -109,15 +124,31 @@ class control(object):
                         self.model.Mediapipe_pose_class.process_image(self.model.img)
                         self.model.Mediapipe_pose_class.expand_landmark()
 
+                        if self.model.currentstate == 2:
+                            # Standardize the pose
+                            try:
+                                
+                                left_shoulder = self.model.Mediapipe_pose_class.Left_Shoulder
+                                right_shoulder = self.model.Mediapipe_pose_class.Right_Shoulder
+                                left_elbow = self.model.Mediapipe_pose_class.Left_elbow
+                                right_elbow = self.model.Mediapipe_pose_class.Right_elbow
+
+                                self.model.angle1 = self.calculate_angle(left_shoulder, right_shoulder, right_elbow)
+                                self.model.angle2 = self.calculate_angle(right_shoulder, left_shoulder, left_elbow)
+
+                                
+                            except:
+                                pass
+
                         # Mediapipe Pose
                         if self.model.currentstate == 3:
                             self.model.Mediapipe_pose_class.handle_twist()
 
                             # 判断是否到了3s
                             self.model.elapsed_time = time.time() - self.model.prev_time
-                            print(self.model.elapsed_time)
+                            # print(self.model.elapsed_time)
                             if 0 <self.model.elapsed_time -3 < 1:
-                                print(self.model.Mediapipe_pose_class.max_level)
+                                # print(self.model.Mediapipe_pose_class.max_level)
                                 if self.model.Mediapipe_pose_class != None:
                                 #   time.sleep(1)
                                     
@@ -125,6 +156,7 @@ class control(object):
                                         # if (random.uniform(0, 1) > 0.2):
                                             self.model.hit_goal = True 
                                             self.model.total_score += 50
+
                                         # else:
                                             # self.model.hit_goal = False
                                     elif self.model.Mediapipe_pose_class.max_level_store == 2:
@@ -140,7 +172,21 @@ class control(object):
                                         
                                     
                                 #换一个新的方向
-                                #   self.direction =  self.model.Mediapipe_pose_class.generate_random_direction()
+                                    try:
+                                        self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()
+
+                
+                                        pygame.mixer.music.stop()                                    
+
+                                        if self.model.direction == "left":
+                                            pygame.mixer.music.load(self.model.GamePage_LeftVoice_path)
+                                        elif self.model.direction == "right":
+                                            pygame.mixer.music.load(self.model.GamePage_RightVoice_path)
+                                        pygame.mixer.music.play()
+                                    except Exception as e:
+                                        print(e)
+                                        import traceback
+                                        traceback.print_exc()
                                 
                                 self.model.prev_time = time.time()
                                 
@@ -150,10 +196,11 @@ class control(object):
                             
                                 
                             #判断60s是否结束
-                            self.model.total_left_time = time.time() - self.model.start_time
-                            if 0 <self.model.total_left_time - 60 < 1:
-                            # 如果结束，发送结束事件，转移状态，将pauseEvent g改为 StateChangeEvent
-                                self.evManager.Post(PauseEvent()) 
+                            self.model.total_spend_time = time.time() - self.model.start_time
+                            if 0 <self.model.total_spend_time - 60 < 1:
+                            # 如果结束，发送结束事件，转移状态，将pauseEvent改为 StateChangeEvent
+                                self.model.currentstate = 4
+                                self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     
                     except Exception as e:
                         print(e)
