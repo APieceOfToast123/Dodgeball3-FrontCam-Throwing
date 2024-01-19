@@ -39,7 +39,7 @@ class control(object):
                         self.model.currentstate = 2
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_OptionButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 3
+                        self.model.currentstate = 4
                          
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_QuitButton.checkForInput(self.model.Mouse_Pos):
@@ -48,7 +48,7 @@ class control(object):
                         
                 elif self.model.currentstate == 4:
                     if self.model.EndPage_PlayerButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 2
+                        self.model.currentstate = 1
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.EndPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                         self.graphics.quit_pygame()
