@@ -90,7 +90,7 @@ class UI_View(object):
                                 text_input="PLAY", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
             self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.OptionButton_path), pos=(640, 490), 
-                                text_input="OPTIONS", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+                                text_input="ranking board", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
             self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
@@ -144,8 +144,14 @@ class UI_View(object):
             self.display_Title("Game Over", 100, "#F26448", 640, 180)
             self.display_Text("Score: {}".format(self.model.total_score) , 50, "#FFFFFF", 640, 280)
 
-            if self.model.total_score < 10:
-                self.display_Title("Your Wrist Is Very Healthy!", 50, "#FEB009", 640, 365)
+            if self.model.total_score <= 100:
+                self.display_Title("You May Have The Wrist Risk!", 50, "#F26448", 640, 365)
+            if 100 < self.model.total_score < 400:
+                self.display_Title("Your Wrist Is Not Really Good....", 50, "#FEB009", 640, 365)
+            if self.model.total_score >= 850:
+                self.display_Title("What A Golden Wrist...!", 50, "#FEB009", 640, 365)
+            else:
+                self.display_Title("Your Wrist Is Good!", 50, "#FEB009", 640, 365)
 
             self.model.EndPage_PlayerButton = Button(image=pygame.image.load(self.model.PlayerButton_path), pos=(640, 490), 
                                 text_input="PLAY AGAIN", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
