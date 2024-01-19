@@ -125,7 +125,7 @@ class UI_View(object):
             self.model.reapetEnergy = pygame.transform.scale(pygame.image.load(self.model.reapetEnergy_path), (8.6, 74))
             self.model.rightEnergy = pygame.transform.scale(pygame.image.load(self.model.rightEnergy_path), (36, 74))
 
-            self.model.timer = pygame.transform.scale(pygame.image.load(self.model.timer_path), (78, 80))
+            self.model.timer = pygame.transform.scale(pygame.image.load(self.model.timer_path), (40, 42))
             self.model.magic = pygame.transform.scale(pygame.image.load(self.model.magic_path), (80, 85))
             self.model.xp = pygame.transform.scale(pygame.image.load(self.model.xp_path), (80, 47))
 
@@ -241,7 +241,7 @@ class UI_View(object):
                 if self.model.currentstate == 3:
                     self.model.screen.blit(self.model.img, (0, 0))
 
-                    font = pygame.font.Font("Resources/Fonts/title_font.ttf", 35)
+                    font = pygame.font.Font("Resources/Fonts/title_font.ttf", 38)
                     font_color = "#F26448" 
                     self.model.time_left = 3 - self.model.elapsed_time
 
@@ -268,18 +268,18 @@ class UI_View(object):
                     # Display the count down
                     box_size = (80, 80)
                     box_position = (0, 150)
-                    text_position = (box_position[0] + 130, box_position[1] + box_size[1] // 3 + 20)
+                    text_position = (box_position[0] + 105, box_position[1] + box_size[1] // 3 )
                     text_surface = font.render("{:.0f}".format(self.model.time_left), True, "#FEB009")
                     self.model.screen.blit(text_surface, text_position)
                     
-                    self.model.screen.blit(self.model.timer, (box_position[0] + 25, box_position[1] + box_size[1] // 3))
+                    self.model.screen.blit(self.model.timer, (box_position[0] + 20, box_position[1] + box_size[1] // 3))
 
                     # Display the twist direction hint
                     direction = "right " if self.model.Mediapipe_pose_class.direction == "left" else "left "
                     text2 = "Please twist  " + direction + "!"
                     box_size = (350, 100)
                     box_position = (self.model.img.get_width()-box_size[0]-5, 150)
-                    text4_position = (box_position[0] - 50, box_position[1] + box_size[1] // 3 + 20)
+                    text4_position = (box_position[0] - 70, box_position[1] + box_size[1] // 3 - 10)
                     text2_surface = font.render(text2, True, font_color)
                     self.model.screen.blit(text2_surface, text4_position)
 
@@ -291,12 +291,12 @@ class UI_View(object):
                     # Display the score
                     text3 = "Score:{}  {}".format(self.model.total_score, "Missed" if not self.model.hit_goal else "Hit")
                     box_size = (280, 100)
-                    box_position = (self.model.screen.get_width()-box_size[0]-20, 30)
-                    text3_position = (box_position[0] + 25, box_position[1] + box_size[1] // 3)
+                    box_position = (self.model.screen.get_width()-box_size[0]-120, 30)
+                    text3_position = (box_position[0], box_position[1] + box_size[1] // 3 )
                     text3_surface = font.render(text3, True, font_color)
                     self.model.screen.blit(text3_surface, text3_position)
 
-                    self.model.screen.blit(self.model.xp, (self.model.screen.get_width()-box_size[0]-90, 60))
+                    self.model.screen.blit(self.model.xp, (self.model.screen.get_width()-box_size[0]- 230, 60))
 
                     if 0 < self.model.elapsed_time - 3 < 1:
                         self.model.Mediapipe_pose_class.max_level_store = 0

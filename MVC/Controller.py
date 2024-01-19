@@ -39,7 +39,7 @@ class control(object):
                         self.model.currentstate = 2
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_OptionButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 5
+                        self.model.currentstate = 3
                          
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_QuitButton.checkForInput(self.model.Mouse_Pos):
@@ -176,7 +176,7 @@ class control(object):
                                         self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()
 
                 
-                                        pygame.mixer.music.stop()                                    
+                                        pygame.mixer.music.pause()                                    
 
                                         if self.model.direction == "left":
                                             pygame.mixer.music.load(self.model.GamePage_LeftVoice_path)

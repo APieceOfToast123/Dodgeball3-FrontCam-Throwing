@@ -49,7 +49,7 @@ class GameEngine(object):
         self.reapetEnergy_path = self.processBar_path + "reapetEnergy.png"
         self.rightEnergy_path = self.processBar_path + "rightEnergy.png"
         self.borderLength = 8
-        self.repeatLength = 9
+        self.repeatLength = 10
 
         self.timer_path = "Resources/Images/timer.png"
         self.magic_path = "Resources/Images/magic.png"
