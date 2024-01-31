@@ -40,6 +40,9 @@ class UI_View(object):
 
         self.clock = pygame.time.Clock()
 
+        self.VoicePromptSound = None
+        self.BackgroundSound = None
+
         # speedup a little bit
         pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
 
@@ -51,7 +54,11 @@ class UI_View(object):
         sys.exit()
 
     def state_change_pygame(self):
-        pygame.mixer.music.stop()
+        if self.VoicePromptSound is not None:
+            self.VoicePromptSound.stop()
+    
+        if self.BackgroundSound is not None:
+            self.BackgroundSound.stop()
         self.model.Menu_Mouse_Pos = None
         self.model.screen.fill((255, 255, 255))
         # self.alpha += 10
@@ -96,7 +103,9 @@ class UI_View(object):
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
 
-            pygame.mixer.music.load(self.model.MainPage_BGM_path)
+            self.BackgroundSound= pygame.mixer.Sound(self.model.MainPage_BGM_path)
+            self.BackgroundSound.set_volume(0.1)
+            self.BackgroundSound.play(-1)
 
         # Standardize Page Init
         if self.model.currentstate == 2:
@@ -104,12 +113,13 @@ class UI_View(object):
 
             self.model.start_counting = False
             self.model.start_counting_time = None
-            pygame.mixer.music.load(self.model.GamePage_StretchVoice_path)
-            pygame.mixer.music.play()
-            time.sleep(2)
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.model.StandarizedPage_BGM_path)
-            pygame.mixer.music.play()
+            self.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_StretchVoice_path)
+            self.VoicePromptSound.set_volume(1)
+            self.VoicePromptSound.play()
+
+            self.BackgroundSound= pygame.mixer.Sound(self.model.StandarizedPage_BGM_path)
+            self.BackgroundSound.set_volume(0.1)
+            self.BackgroundSound.play(-1)
 
 
         # Game Page Init
@@ -131,9 +141,10 @@ class UI_View(object):
 
             self.model.bun_sprite = sprite_engine(self.model.bun_sprite_path, (780, 200), 13, self.model)
 
-            # self.model.random_music()
-            # pygame.mixer.music.load(self.model.GamePage_BGM_path)
-
+            self.model.random_music()
+            self.BackgroundSound= pygame.mixer.Sound(self.model.GamePage_BGM_path)
+            self.BackgroundSound.set_volume(0.1)
+            self.BackgroundSound.play(-1)
 
         # Game Over Page Init
         if self.model.currentstate == 4:
@@ -159,11 +170,10 @@ class UI_View(object):
             self.model.EndPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
-
-            pygame.mixer.music.load(self.model.MainPage_BGM_path)
+            self.BackgroundSound= pygame.mixer.Sound(self.model.MainPage_BGM_path)
+            self.BackgroundSound.set_volume(0.1)
+            self.BackgroundSound.play(-1)
             
-        pygame.mixer.music.play(-1)
-
     """
     This function will be called 60 times per second
     """

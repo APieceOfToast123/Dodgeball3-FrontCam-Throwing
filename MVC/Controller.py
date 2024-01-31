@@ -170,30 +170,20 @@ class control(object):
                                         self.model.total_score += 50
                                         print("打中了加分")
                                         
-                                    
                                 #换一个新的方向
-                                    try:
-                                        self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()
+                                    self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()                               
 
-                
-                                        pygame.mixer.music.pause()                                    
-
-                                        if self.model.direction == "left":
-                                            pygame.mixer.music.load(self.model.GamePage_LeftVoice_path)
-                                        elif self.model.direction == "right":
-                                            pygame.mixer.music.load(self.model.GamePage_RightVoice_path)
-                                        pygame.mixer.music.play()
-                                    except Exception as e:
-                                        print(e)
-                                        import traceback
-                                        traceback.print_exc()
+                                    if self.model.direction == "left":
+                                        self.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_LeftVoice_path)
+                                    elif self.model.direction == "right":
+                                        self.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_RightVoice_path)
+                                    self.VoicePromptSound.set_volume(1)
+                                    pygame.mixer.Sound.play()
                                 
-                                self.model.prev_time = time.time()
-                                
+                                self.model.prev_time = time.time()                                
                                 
                                 #   print(time.time() - self.model.prev_time)
-                                #   print("change the direction")
-                            
+                                #   print("change the direction")                            
                                 
                             #判断60s是否结束
                             self.model.total_spend_time = time.time() - self.model.start_time
