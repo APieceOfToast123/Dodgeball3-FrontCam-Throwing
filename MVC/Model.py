@@ -9,7 +9,7 @@ STATE_MAINPAGE = 1
 STATE_STANDARDIZE = 2
 STATE_GAME = 3
 STATE_GAMEOVER = 4
-STATE_OPTION = 5
+STATE_RANKINGBOARD = 5
 STATE_PAUSE = 6
 
 class GameEngine(object):
@@ -28,6 +28,9 @@ class GameEngine(object):
         self.prev_time = self.start_time 
         self.total_score = 0
         self.hit_goal = False
+        self.game_record = []
+        self.sorted_records = []
+
     def load_settings_and_data(self):
         icon_path = "Resources/Images/icon.png"
         pygame_icon = pygame.image.load(icon_path)
@@ -68,6 +71,13 @@ class GameEngine(object):
         self.GamePage_LeftVoice_path = "Resources/Musics/Left Voice.wav"
         self.GamePage_RightVoice_path = "Resources/Musics/Right Voice.wav"
         self.GamePage_StretchVoice_path = "Resources/Musics/Strench Your Arms.wav"
+
+        self.ClickSound_path = "Resources/Musics/Click Sound.wav"
+        self.EnsureSound_path = "Resources/Musics/Ensure Voice.wav"
+        
+        self.GamePage_level1_path = "Resoureces/Musics/level1.wav"
+        self.GamePage_level2_path = "Resoureces/Musics/level2.wav"
+        self.GamePage_level3_path = "Resoureces/Musics/level3.wav"
 
 
     def get_font(self, size): # Returns Press-Start-2P in the desired size

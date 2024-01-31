@@ -34,13 +34,16 @@ class control(object):
                 self.graphics.quit_pygame()
                 self.evManager.Post(QuitEvent())
             if event.type == pygame.MOUSEBUTTONDOWN:
+                self.graphics.ClickSound = pygame.mixer.Sound(self.model.ClickSound_path)
+                self.graphics.ClickSound.set_volume(1)
+                self.graphics.ClickSound.play()
+
                 if self.model.currentstate == 1:
                     if self.model.MainPage_PlayerButton.checkForInput(self.model.Mouse_Pos):
                         self.model.currentstate = 2
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_OptionButton.checkForInput(self.model.Mouse_Pos):
-                        self.model.currentstate = 4
-                         
+                        self.model.currentstate = 5
                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     if self.model.MainPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                         self.graphics.quit_pygame()
@@ -53,6 +56,11 @@ class control(object):
                     if self.model.EndPage_QuitButton.checkForInput(self.model.Mouse_Pos):
                         self.graphics.quit_pygame()
                         self.evManager.Post(QuitEvent())
+
+                elif self.model.currentstate == 5:
+                    if self.model.RankPage_BackButton.checkForInput(self.model.Mouse_Pos):
+                        self.model.currentstate = 1
+                        self.evManager.Post(StateChangeEvent(self.model.currentstate))
                 else:
                     pass
     
@@ -156,6 +164,9 @@ class control(object):
                                         # if (random.uniform(0, 1) > 0.2):
                                             self.model.hit_goal = True 
                                             self.model.total_score += 50
+                                            self.graphics.GamePage_level1 = pygame.mixer.Sound(self.model.GamePage_level1_path)
+                                            self.graphics.GamePage_level1.set_volume(1)
+                                            self.graphics.GamePage_level1.play()
 
                                         # else:
                                             # self.model.hit_goal = False
@@ -163,22 +174,28 @@ class control(object):
                                         # if (random.uniform(0, 1) > 0.1):
                                             self.model.hit_goal = True  
                                             self.model.total_score += 50
+                                            self.graphics.GamePage_level2 = pygame.mixer.Sound(self.model.GamePage_level2_path)
+                                            self.graphics.GamePage_level2.set_volume(1)
+                                            self.graphics.GamePage_level2.play()
                                         # else: 
                                             # self.model.hit_goal = False
                                     elif self.model.Mediapipe_pose_class.max_level_store == 3:
                                         self.model.hit_goal = True 
                                         self.model.total_score += 50
                                         print("打中了加分")
+                                        self.graphics.GamePage_level3 = pygame.mixer.Sound(self.model.GamePage_level3_path)
+                                        self.graphics.GamePage_level3.set_volume(1)
+                                        self.graphics.GamePage_level3.play()
                                         
-                                #换一个新的方向
+                                    #换一个新的方向
                                     self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()                               
 
                                     if self.model.direction == "left":
-                                        self.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_LeftVoice_path)
+                                        self.graphics.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_RightVoice_path)
                                     elif self.model.direction == "right":
-                                        self.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_RightVoice_path)
-                                    self.VoicePromptSound.set_volume(1)
-                                    pygame.mixer.Sound.play()
+                                        self.graphics.VoicePromptSound = pygame.mixer.Sound(self.model.GamePage_LeftVoice_path)
+                                    self.graphics.VoicePromptSound.set_volume(1)
+                                    self.graphics.VoicePromptSound.play()
                                 
                                 self.model.prev_time = time.time()                                
                                 
@@ -189,6 +206,9 @@ class control(object):
                             self.model.total_spend_time = time.time() - self.model.start_time
                             if 0 <self.model.total_spend_time - 60 < 1:
                             # 如果结束，发送结束事件，转移状态，将pauseEvent改为 StateChangeEvent
+                                self.model.game_record.append({'score': self.model.total_score, 'timestamp': time.time()})
+                                self.model.sorted_records = sorted(self.model.game_record, key=lambda x: x['score'], reverse=True)
+
                                 self.model.currentstate = 4
                                 self.evManager.Post(StateChangeEvent(self.model.currentstate))
                     

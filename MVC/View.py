@@ -40,8 +40,17 @@ class UI_View(object):
 
         self.clock = pygame.time.Clock()
 
+        self.playSound1 = False
+        self.playSound2 = True
+        self.playSound3 = True
+
         self.VoicePromptSound = None
         self.BackgroundSound = None
+        self.ClickSound = None
+        self.EnsureSound = None
+        self.level1 = None
+        self.level2 = None
+        self.level3 = None
 
         # speedup a little bit
         pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
@@ -59,6 +68,7 @@ class UI_View(object):
     
         if self.BackgroundSound is not None:
             self.BackgroundSound.stop()
+        
         self.model.Menu_Mouse_Pos = None
         self.model.screen.fill((255, 255, 255))
         # self.alpha += 10
@@ -97,7 +107,7 @@ class UI_View(object):
                                 text_input="PLAY", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
             self.model.MainPage_OptionButton = Button(image=pygame.image.load(self.model.OptionButton_path), pos=(640, 490), 
-                                text_input="ranking board", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+                                text_input="RANKING BOARD", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
             self.model.MainPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
@@ -164,8 +174,8 @@ class UI_View(object):
             else:
                 self.display_Title("Your Waist Is Good!", 50, "#FEB009", 640, 365)
 
-            self.model.EndPage_PlayerButton = Button(image=pygame.image.load(self.model.PlayerButton_path), pos=(640, 490), 
-                                text_input="PLAY AGAIN", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+            self.model.EndPage_PlayerButton = Button(image=pygame.image.load(self.model.OptionButton_path), pos=(640, 490), 
+                                text_input="BACK TO MAINPAGE", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
             
             self.model.EndPage_QuitButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
                                 text_input="QUIT", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
@@ -173,6 +183,30 @@ class UI_View(object):
             self.BackgroundSound= pygame.mixer.Sound(self.model.MainPage_BGM_path)
             self.BackgroundSound.set_volume(0.1)
             self.BackgroundSound.play(-1)
+        
+        if self.model.currentstate == 5:
+            try:
+                self.model.EndPage_BG = pygame.transform.scale(pygame.image.load(self.model.EndPage_BG_path), (1280, 720))
+                self.model.screen.blit(self.model.EndPage_BG, (0, 0))
+
+                self.display_Title("Ranking Board", 60, "#FEB009", 640, 70)
+                if not self.model.sorted_records:
+                    self.display_Text("You haven't played any game.", 50, "#FFFFFF", 640, 300)
+                else:
+                    for i, record in enumerate(self.model.sorted_records, start=1):
+                        y_position = 50 * i + 150
+                        self.display_Text(f"{i}. Score: {record['score']} - Time: {record['timestamp']}", 40, "#FFFFFF", 640, y_position)
+
+                self.model.RankPage_BackButton = Button(image=pygame.image.load(self.model.QuitButton_path), pos=(640, 620), 
+                                text_input="BACK", font=self.model.get_title_font(60), base_color="#FEB009", hovering_color="White")
+                
+                self.BackgroundSound= pygame.mixer.Sound(self.model.MainPage_BGM_path)
+                self.BackgroundSound.set_volume(0.1)
+                self.BackgroundSound.play(-1)
+            except Exception as e:
+                print(e)
+                from traceback import print_exc
+                print_exc()
             
     """
     This function will be called 60 times per second
@@ -181,7 +215,7 @@ class UI_View(object):
         try:
             # Update the screen
             # For Main Page & Game Over Page, get the mouse position and check for input
-            if self.model.currentstate == 1 or self.model.currentstate == 4:
+            if self.model.currentstate == 1 or self.model.currentstate == 4 or self.model.currentstate == 5:
                 self.model.Mouse_Pos = pygame.mouse.get_pos()
 
                 # Main Menu Page
@@ -194,7 +228,12 @@ class UI_View(object):
                 if self.model.currentstate == 4:
                     for button in [self.model.EndPage_PlayerButton, self.model.EndPage_QuitButton]:
                         button.changeColor(self.model.Mouse_Pos)
-                        button.update(self.model.screen)              
+                        button.update(self.model.screen)             
+
+                if self.model.currentstate == 5:
+                    for button in [self.model.RankPage_BackButton]:
+                        button.changeColor(self.model.Mouse_Pos)
+                        button.update(self.model.screen)     
 
             # For Standardize Page & Game Page, get the camera image and display it
             if self.model.currentstate == 2 or self.model.currentstate == 3: 
@@ -224,19 +263,31 @@ class UI_View(object):
                                 self.model.start_counting_time = time.time()
                             elif self.model.start_counting: 
                                 if time.time() - self.model.start_counting_time < 1.5:
-                                        self.display_Title("Hold Still for 3 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
-                                        print("Hold Still for 3 Seconds!")
+                                    self.display_Title("Hold Still for 3 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
+                                    print("Hold Still for 3 Seconds!")
+                                    self.playSound1 = True
                                 elif 1.5 < (time.time() - self.model.start_counting_time) < 2.3:
-                                        self.display_Title("Hold Still for 2 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
-                                        print("Hold Still for 2 Seconds!")
+                                    self.display_Title("Hold Still for 2 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
+                                    print("Hold Still for 2 Seconds!")
+                                    self.playSound2 = True
                                 elif 2.3< (time.time() - self.model.start_counting_time) < 3:
-                                        self.display_Title("Hold Still for 1 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
-                                        print("Hold Still for 1 Seconds!")
+                                    self.display_Title("Hold Still for 1 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
+                                    print("Hold Still for 1 Seconds!")
+                                    self.playSound3 = True
                                 elif (time.time() - self.model.start_counting_time) > 3:
                                         self.model.currentstate = 3
                                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
+                                        self.EnsureSound.stop()
                                         self.model.start_counting_time = None
                                         self.model.start_counting = False
+
+                                if self.playSound1 or self.playSound2 or self.playSound3:
+                                    self.EnsureSound= pygame.mixer.Sound(self.model.EnsureSound_path)
+                                    self.EnsureSound.set_volume(1)
+                                    self.EnsureSound.play(1)
+                                    self.playSound1 = False
+                                    self.playSound2 = False
+                                    self.playSound3 = False
                             else:
                                 self.display_Title("???!", 50, "#FEB009", self.model.screen.get_width()//2, 120)   
                         except Exception as e:
@@ -283,6 +334,9 @@ class UI_View(object):
                     self.model.screen.blit(text_surface, text_position)
                     
                     self.model.screen.blit(self.model.timer, (box_position[0] + 20, box_position[1] + box_size[1] // 3))
+
+                    # Display the time left
+                    self.display_Title("Time left: {:.2f}".format(self.model.total_spend_time), 25, "#FEB009", 50, 130)
 
                     # Display the twist direction hint
                     direction = "right " if self.model.Mediapipe_pose_class.direction == "left" else "left "
