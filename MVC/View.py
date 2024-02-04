@@ -40,10 +40,6 @@ class UI_View(object):
 
         self.clock = pygame.time.Clock()
 
-        self.playSound1 = False
-        self.playSound2 = True
-        self.playSound3 = True
-
         self.VoicePromptSound = None
         self.BackgroundSound = None
         self.ClickSound = None
@@ -265,29 +261,30 @@ class UI_View(object):
                                 if time.time() - self.model.start_counting_time < 1.5:
                                     self.display_Title("Hold Still for 3 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
                                     print("Hold Still for 3 Seconds!")
-                                    self.playSound1 = True
                                 elif 1.5 < (time.time() - self.model.start_counting_time) < 2.3:
                                     self.display_Title("Hold Still for 2 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
                                     print("Hold Still for 2 Seconds!")
-                                    self.playSound2 = True
                                 elif 2.3< (time.time() - self.model.start_counting_time) < 3:
                                     self.display_Title("Hold Still for 1 Seconds!", 50, "#FEB009", self.model.screen.get_width()//2, 120)
                                     print("Hold Still for 1 Seconds!")
-                                    self.playSound3 = True
                                 elif (time.time() - self.model.start_counting_time) > 3:
                                         self.model.currentstate = 3
                                         self.evManager.Post(StateChangeEvent(self.model.currentstate))
                                         self.EnsureSound.stop()
                                         self.model.start_counting_time = None
                                         self.model.start_counting = False
-
-                                if self.playSound1 or self.playSound2 or self.playSound3:
+                                
+                                if (1.45 < time.time() - self.model.start_counting_time < 1.5 or
+                                    2.25 < time.time() - self.model.start_counting_time < 2.3 or
+                                    2.95 < time.time() - self.model.start_counting_time < 3):
+                                    self.model.beep = True
+                                
+                                if self.model.beep == True:
                                     self.EnsureSound= pygame.mixer.Sound(self.model.EnsureSound_path)
                                     self.EnsureSound.set_volume(1)
                                     self.EnsureSound.play(1)
-                                    self.playSound1 = False
-                                    self.playSound2 = False
-                                    self.playSound3 = False
+                                    self.model.beep = False
+
                             else:
                                 self.display_Title("???!", 50, "#FEB009", self.model.screen.get_width()//2, 120)   
                         except Exception as e:
@@ -302,7 +299,7 @@ class UI_View(object):
                 if self.model.currentstate == 3:
                     self.model.screen.blit(self.model.img, (0, 0))
 
-                    font = pygame.font.Font("Resources/Fonts/title_font.ttf", 38)
+                    font = pygame.font.Font(self.model.Title_font_path, 38)
                     font_color = "#F26448" 
                     self.model.time_left = 3 - self.model.elapsed_time
 
@@ -336,7 +333,7 @@ class UI_View(object):
                     self.model.screen.blit(self.model.timer, (box_position[0] + 20, box_position[1] + box_size[1] // 3))
 
                     # Display the time left
-                    self.display_Title("Time left: {:.2f}".format(self.model.total_spend_time), 25, "#FEB009", 50, 130)
+                    self.display_Title("Time left: {:.2f}".format(60 - int(self.model.total_spend_time)), 25, "#FEB009", 150, 135)
 
                     # Display the twist direction hint
                     direction = "right " if self.model.Mediapipe_pose_class.direction == "left" else "left "

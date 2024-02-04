@@ -151,41 +151,57 @@ class control(object):
                         # Mediapipe Pose
                         if self.model.currentstate == 3:
                             self.model.Mediapipe_pose_class.handle_twist()
+                            
+                            self.model.elapsed_time = time.time() - self.model.prev_time
+
+                            if time.time() - self.model.prev_time > 3:
+                                self.model.guided = True
+
+                            if 2 < self.model.elapsed_time < 2.1:
+                                if self.model.guided == False:
+                                    self.graphics.GamePage_guide = pygame.mixer.Sound(self.model.GamePage_guide_path)
+                                    self.graphics.GamePage_guide.set_volume(1)
+                                    self.graphics.GamePage_guide.play()
+                                elif self.model.applaused == False and self.model.guided == True:
+                                    if self.model.Mediapipe_pose_class != None:
+                                        if self.model.Mediapipe_pose_class.max_level_store == 0:
+                                            self.graphics.GamePage_level0 = pygame.mixer.Sound(self.model.GamePage_level0_path)
+                                            self.graphics.GamePage_level0.set_volume(1)
+                                            self.graphics.GamePage_level0.play()
+                                        elif self.model.Mediapipe_pose_class.max_level_store == 1:
+                                            self.graphics.GamePage_level1 = pygame.mixer.Sound(self.model.GamePage_level1_path)
+                                            self.graphics.GamePage_level1.set_volume(1)
+                                            self.graphics.GamePage_level1.play()
+                                        elif self.model.Mediapipe_pose_class.max_level_store == 2:
+                                            self.graphics.GamePage_level2 = pygame.mixer.Sound(self.model.GamePage_level2_path)
+                                            self.graphics.GamePage_level2.set_volume(1)
+                                            self.graphics.GamePage_level2.play()
+                                        elif self.model.Mediapipe_pose_class.max_level_store == 3:
+                                            self.graphics.GamePage_level3 = pygame.mixer.Sound(self.model.GamePage_level3_path)
+                                            self.graphics.GamePage_level3.set_volume(1)
+                                            self.graphics.GamePage_level3.play()
+                                    self.model.applaused = True
 
                             # 判断是否到了3s
-                            self.model.elapsed_time = time.time() - self.model.prev_time
-                            # print(self.model.elapsed_time)
                             if 0 <self.model.elapsed_time -3 < 1:
-                                # print(self.model.Mediapipe_pose_class.max_level)
                                 if self.model.Mediapipe_pose_class != None:
-                                #   time.sleep(1)
                                     
                                     if self.model.Mediapipe_pose_class.max_level_store == 1:
                                         # if (random.uniform(0, 1) > 0.2):
                                             self.model.hit_goal = True 
                                             self.model.total_score += 50
-                                            self.graphics.GamePage_level1 = pygame.mixer.Sound(self.model.GamePage_level1_path)
-                                            self.graphics.GamePage_level1.set_volume(1)
-                                            self.graphics.GamePage_level1.play()
-
                                         # else:
                                             # self.model.hit_goal = False
                                     elif self.model.Mediapipe_pose_class.max_level_store == 2:
                                         # if (random.uniform(0, 1) > 0.1):
                                             self.model.hit_goal = True  
                                             self.model.total_score += 50
-                                            self.graphics.GamePage_level2 = pygame.mixer.Sound(self.model.GamePage_level2_path)
-                                            self.graphics.GamePage_level2.set_volume(1)
-                                            self.graphics.GamePage_level2.play()
                                         # else: 
                                             # self.model.hit_goal = False
                                     elif self.model.Mediapipe_pose_class.max_level_store == 3:
                                         self.model.hit_goal = True 
                                         self.model.total_score += 50
                                         print("打中了加分")
-                                        self.graphics.GamePage_level3 = pygame.mixer.Sound(self.model.GamePage_level3_path)
-                                        self.graphics.GamePage_level3.set_volume(1)
-                                        self.graphics.GamePage_level3.play()
                                         
                                     #换一个新的方向
                                     self.model.direction =  self.model.Mediapipe_pose_class.generate_random_direction()                               
@@ -197,7 +213,8 @@ class control(object):
                                     self.graphics.VoicePromptSound.set_volume(1)
                                     self.graphics.VoicePromptSound.play()
                                 
-                                self.model.prev_time = time.time()                                
+                                self.model.applaused = False 
+                                self.model.prev_time = time.time()                               
                                 
                                 #   print(time.time() - self.model.prev_time)
                                 #   print("change the direction")                            
